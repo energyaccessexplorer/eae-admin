@@ -13,7 +13,7 @@ const url = new URL(location);
 url.searchParams.set('world', 'eae');
 history.replaceState(null, null, url);
 
-_u.model['edit_modal_jobs'] = [
+_u.model['edit_modal_jobs'].push(
 	async function(object, form) {
 		const fapi = new pgrest();
 		fapi.base = dt.config.api;
@@ -37,7 +37,7 @@ _u.model['edit_modal_jobs'] = [
 
 		qs('fieldset', form).append(d);
 	},
-];
+);
 
 export const model = _u.model;
 export const collection = _u.collection;
