@@ -89,10 +89,11 @@ export const model = {
 		},
 
 		"deployment": {
-			"type":   "array",
-			"unique": true,
-			"hint":   "Select the environment(s) where the dataset will be deployed.",
-			"schema": {
+			"type":     "array",
+			"unique":   true,
+			"hint":     "Select the environment(s) where the dataset will be deployed.",
+			"validate": deployments_production_content_date_validate,
+			"schema":   {
 				"type":     "string",
 				"options":  deployment_options,
 				"required": true,
@@ -1010,6 +1011,22 @@ Just delete it. `,
 			return unnerr("mutant_targets");
 	}
 	else if (m) reqerr("mutant_targets");
+
+	return true;
+};
+
+function deployments_production_content_date_validate(newdata) {
+	if (!newdata.deployment.includes('production')) return true;
+
+	if (!newdata.metadata.content_date?.match('^[0-9]{4}$')) {
+		FLASH.push({
+			"type":    'error',
+			"title":   `Production Deployment + metadata -> content_date`,
+			"message": `Datasets that are going into production MUST have a single-year content date.`,
+		});
+
+		return false;
+	}
 
 	return true;
 };
