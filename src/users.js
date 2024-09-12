@@ -39,6 +39,35 @@ _u.model['edit_modal_jobs'].push(
 	},
 );
 
+_u.collection['parse'] = function($) {
+	const a = $['about'] || {};
+
+	$._country = a['country'];
+	$._aoi = maybe(a, 'areas_of_interest', 'length') ? a['areas_of_interest'][0] : a['areas_of_interest'];
+
+	$._first_name = a['first_name'];
+	$._last_name = a['last_name'];
+
+	$._email_name = `${$.email};;;${a['last_name']};;;${a['first_name']}`;
+
+	$['email+name'] = $._email_name; // just so that it looks pretty.
+
+	return $;
+};
+
+_u.collection['endpoint'] = {
+	"select": [
+		'id',
+		'email',
+		'role',
+		'world',
+		'about',
+	],
+	"order": 'email.asc',
+};
+
+_u.collection['filters'] = ['email+name'];
+
 export const model = _u.model;
 export const collection = _u.collection;
 export const base = _u.base;
