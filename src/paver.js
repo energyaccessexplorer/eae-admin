@@ -666,6 +666,8 @@ async function crop_raster($, payload, { paver_modal }) {
 
 async function simplify($, payload, { paver_modal }) {
 	return function() {
+		payload.field = maybe($, 'configuration', 'vectors_id');
+
 		return submit('simplify', payload, { paver_modal })
 			.then(r => r.json())
 			.then(async r => {
@@ -684,6 +686,9 @@ async function simplify($, payload, { paver_modal }) {
 				return API.patch('datasets', { "id": `eq.${$.id}` }, {
 					"payload": {
 						"processed_files": [{
+							"func":     'vectors',
+							"endpoint": `https://wri-public-data.s3.amazonaws.com/EnergyAccess/paver-outputs/${r.vectors}`,
+						}, {
 							"func":     'raster',
 							"endpoint": `https://wri-public-data.s3.amazonaws.com/EnergyAccess/paver-outputs/${r.raster}`,
 						}],
