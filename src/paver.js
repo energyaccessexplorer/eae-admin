@@ -107,8 +107,7 @@ async function payload_fill($, payload, datasets_func) {
 	].includes($.datatype)))
 		payload.simplify = maybe(cat, 'vectors', 'paver', 'simplify') || 0;
 
-	payload.config = JSON.stringify(cat.raster.paver);
-
+	payload.config = JSON.stringify(maybe(cat, 'raster', 'paver'));
 	payload.resolution = r.resolution;
 
 	return true;
