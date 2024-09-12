@@ -583,15 +583,10 @@ function raster_validate() {
 function raster_exists_validate(newdata, data) {
 	const r = newdata['raster'];
 	const t = data.datatype;
-	const x = or(t === 'polygons-timeline', ['mutant', 'table'].includes(t));
+	const x = ['mutant', 'table'].includes(t);
 
 	if (!t) {
-		FLASH.push({
-			"type":    'warning',
-			"title":   "Datatype?",
-			"message": "Undecided datatype for this category. Is it new?",
-		});
-
+		console.warn("Undecided datatype for this category. Is it new? Then OK.", data);
 		return true;
 	}
 
@@ -614,8 +609,18 @@ function raster_exists_validate(newdata, data) {
 	return true;
 };
 
-function raster_paver_validate(newdata) {
-	if (and(newdata['vectors'], maybe(newdata, 'raster', 'paver'))) {
+function raster_paver_validate(newdata, data) {
+	const t = data.datatype;
+	const p = maybe(newdata, 'raster', 'paver');
+
+	if (!t) {
+		console.warn("Undecided datatype for this category. Is it new? Then OK.", data);
+		return true;
+	}
+
+	if (and(t.match('-timeline'), p)) ;
+
+	else if (and(newdata['vectors'], p)) {
 		err(
 			"Paver configuration error",
 			"Vector categories do not require raster->paver",
