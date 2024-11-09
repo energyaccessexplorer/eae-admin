@@ -551,7 +551,9 @@ export const model = {
 
 					try {
 						co = JSON.parse(ta.value);
-					} catch (e) {
+					} catch (err) {
+						console.warn(err);
+
 						FLASH.push({
 							"type":    "warn",
 							"message": "Failed to parse JSON from configuration overrides. Using an empty object.",
