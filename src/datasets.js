@@ -177,23 +177,11 @@ export const model = {
 					),
 				},
 
-				"polygons_valued_columns": {
-					"type":     "object",
+				"csv_column": {
+					"type":     "string",
 					"nullable": true,
-					"hint":     "CSV file configuration",
-					"schema":   {
-						"key": {
-							"type":     "string",
-							"required": true,
-							"hint":     "Column header containing IDs for geographic divisions in linked CSV file. This corresponds to the vectors_id value above.",
-						},
-
-						"value": {
-							"type":     "string",
-							"nullable": true,
-							"hint":     "Column header containing numerical values for indicator in linked CSV file. Percentages should be formatted as decimal numbers (i.e. 25% should be 25.0)",
-						},
-					},
+					"hint":     "CSV column dedicated for polygons-valued (generally indicators) and boundaries datasets",
+					"enabled":  m => m.datatype.match(/polygons-(valued|boundaries)/),
 				},
 
 				"attributes_map": {
@@ -969,17 +957,14 @@ Just delete it. `,
 			return attrerr("vectors_id", config.vectors_id);
 	}
 
-	if (config.polygons_valued_columns) {
-		if (!vb) return unnerr("polygons_valued_columns");
+	if (config.csv_column) {
+		if (!vb)
+			return unnerr("csv_columns");
 
-		for (const n in config.polygons_valued_columns) {
-			const k = config.polygons_valued_columns[n];
-
-			if (!data._existing_columns.includes(k))
-				return colerr("polygons_valued_columns", k);
-		}
+		if (!data._existing_columns.includes(config.csv_column))
+			return colerr("csv_column", config.csv_column);
 	}
-	else if (vb) return reqerr("polygons_valued_columns");
+	else if (vb) return reqerr("csv_column");
 
 	if (config.attributes_map) {
 		if (vb || t) return unnerr("attributes_map");
