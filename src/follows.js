@@ -7,6 +7,8 @@ export const header = "Follows";
 export const model = {
 	"base": base,
 
+	"pkey": "email",
+
 	"schema": {
 		"email": {
 			"type":     "string",
