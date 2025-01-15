@@ -1,75 +1,92 @@
-import * as _u from 'https://noop.nu/auth/admin/src/users.js';
-
-import pgrest from 'https://noop.nu/dist/duck-tape/lib/pgrest.js';
-
-dt.API.base = dt.config.auth_server + "/admin/api";
-
 const claims = jwt_decode(localStorage.getItem('token'));
 
 if (!['leader', 'manager', 'director', 'root'].includes(claims['role']))
 	qs(`nav#dt-nav a[href="${dt.config.base}/?model=users"]`).remove();
 
-const url = new URL(location);
-url.searchParams.set('world', 'eae');
-history.replaceState(null, null, url);
+export const model = {
+	"main": "email",
 
-_u.model['edit_modal_jobs'].push(
-	async function(object, form) {
-		const fapi = new pgrest();
-		fapi.base = dt.config.api;
-		fapi.FLASH = dt.FLASH;
+	"schema": {
+		"email": {
+			"type":     "email",
+			"required": true,
+		},
 
-		const follows = await fapi.get('follows', {
-			"select": ['*', 'dataset:datasets(info)'],
-			"email":  `eq.${object.data.email}`,
-		});
-		const d = ce('details');
-		d.append(ce('summary', ce('label', 'follows')));
+		"role": {
+			"type":     "string",
+			"required": true,
+		},
 
-		const x = ce('div', null, { "id": "badges" });
-		x.append(...follows.map(f => ce(
-			'span',
-			ce('a', f.dataset.info, { "href": `./?model=datasets&id=${f.dataset_id}&edit_model=${f.dataset_id}` }),
-			{ "class": "badge" },
-		)));
+		"disabled": {
+			"type":    "boolean",
+			"default": false,
+		},
 
-		d.append(x);
+		"data": {
+			"type": "json",
+		},
 
-		qs('fieldset', form).append(d);
+		"about": {
+			"type": "json",
+		},
 	},
-);
 
-_u.collection['parse'] = function($) {
-	const a = $['about'] || {};
+	"edit_modal_jobs": [
+		async function(object, form) {
+			const follows = await dt.API.get('follows', {
+				"select": ['*', 'dataset:datasets(info)'],
+				"email":  `eq.${object.data.email}`,
+			});
+			const d = ce('details');
+			d.append(ce('summary', ce('label', 'follows')));
 
-	$._country = a['country'];
-	$._aoi = maybe(a, 'areas_of_interest', 'length') ? a['areas_of_interest'][0] : a['areas_of_interest'];
+			const x = ce('div', null, { "id": "badges" });
+			x.append(...follows.map(f => ce(
+				'span',
+				ce('a', f.dataset.info, { "href": `./?model=datasets&id=${f.dataset_id}&edit_model=${f.dataset_id}` }),
+				{ "class": "badge" },
+			)));
 
-	$._first_name = a['first_name'];
-	$._last_name = a['last_name'];
+			d.append(x);
 
-	$._email_name = `${$.email};;;${a['last_name']};;;${a['first_name']}`;
-
-	$['email+name'] = $._email_name; // just so that it looks pretty.
-
-	return $;
-};
-
-_u.collection['endpoint'] = {
-	"select": [
-		'id',
-		'email',
-		'role',
-		'world',
-		'about',
+			qs('fieldset', form).append(d);
+		},
 	],
-	"order": 'email.asc',
 };
 
-_u.collection['filters'] = ['email+name'];
+export const collection = {
+	"filters": ['email+name'],
 
-export const model = _u.model;
-export const collection = _u.collection;
-export const base = _u.base;
-export const header = _u.header;
-export const new_disabled = false;
+	"endpoint": {
+		"select": [
+			'id',
+			'email',
+			'role',
+			'data',
+			'about',
+		],
+		"order": 'email.asc',
+	},
+
+	"parse": function($) {
+		const a = $['about'] || {};
+
+		$._country = a['country'];
+		$._aoi = maybe(a, 'areas_of_interest', 'length') ? a['areas_of_interest'][0] : a['areas_of_interest'];
+
+		$._first_name = a['first_name'];
+		$._last_name = a['last_name'];
+
+		$._email_name = `${$.email};;;${a['last_name']};;;${a['first_name']}`;
+
+		$['email+name'] = $._email_name; // just so that it looks pretty.
+
+		return $;
+	},
+};
+
+export const base = 'users';
+
+export const header = "Users";
+
+export const new_disabled = true;
