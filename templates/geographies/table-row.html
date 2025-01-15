@@ -21,58 +21,58 @@
   </td>
 
   <td>
-    <a bind-icon="edit"></a>
+    <a dt-edit class="bi-pencil-fill"></a>
   </td>
 
   <td bind="name"></td>
 
   <td>
-    <span bind-icon="globe2"
+    <span class="bi-globe2"
           title="deployed in production"
           bind-cond="inproduction"></span>
 
     <span title="NOT deployed in production"
-          bind-icon="empty"
+          class="bi-empty"
           bind-unless="inproduction"></span>
   </td>
 
   <td>
-    <span bind-icon="lock"
+    <span class="bi-lock"
           title="deployed in staging"
           bind-cond="instaging"></span>
 
     <span title="NOT deployed in staging"
-          bind-icon="empty"
+          class="bi-empty"
           bind-unless="instaging"></span>
   </td>
 
   <td>
-    <span bind-icon="bounding-box-circles"
+    <span class="bi-bounding-box-circles"
           title="deployed in training"
           bind-cond="intraining"></span>
 
     <span title="NOT deployed in training"
-          bind-icon="empty"
+          class="bi-empty"
           bind-unless="intraining"></span>
   </td>
 
   <td>
-    <span bind-icon="test"
+    <span class="bi-test"
           title="deployed in test"
           bind-cond="intest"></span>
 
     <span title="NOT deployed in test"
-          bind-icon="empty"
+          class="bi-empty"
           bind-unless="intest"></span>
   </td>
 
   <td>
-    <span bind-icon="braces"
+    <span class="bi-braces"
           title="deployed in dev"
           bind-cond="indev"></span>
 
     <span title="NOT deployed in dev"
-          bind-icon="empty"
+          class="bi-empty"
           bind-unless="indev"></span>
   </td>
 
