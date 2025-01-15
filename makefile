@@ -6,6 +6,5 @@ lint:
 deps:
 	DEST=./dist/lib ./bin/deps
 
-.include ".env"
-# .include "./env.mk"
-# .include "./duck-tape.mk"
+.include "./env.mk"
+.include "./duck-tape.mk"
