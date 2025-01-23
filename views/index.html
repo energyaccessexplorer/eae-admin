@@ -97,6 +97,22 @@
 
       if (!role) return;
 
+      if (['guest'].includes(role)) {
+        const p = document.createElement('p');
+        p.style = "margin: 2em;";
+        p.innerHTML = "As a <strong>guest</strong> account, you are not allowed to access the admin panel. <br><br>";
+
+        const a = document.createElement('a');
+        a.href = "https://www.energyaccessexplorer.org/";
+        a.innerText = "Back to website";
+        p.append(a);
+
+        document.body.replaceChildren(p);
+
+        clearInterval(i);
+        return;
+      }
+
       const dtnav = document.querySelector('nav#dt-nav');
       if (!dtnav) return;
 
