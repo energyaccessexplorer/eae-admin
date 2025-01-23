@@ -9,7 +9,7 @@
       style="font-family: monospace;"></td>
 
   <td bind-attr="title"
-      bind-value="features"
+      bind-arg="features"
       style="font-family: monospace;">
     <span bind="datatype"></span>
     <span bind-cond="unit"
@@ -20,17 +20,17 @@
 
   <td style="text-align: right;">
     <a bind-attr="href"
-       bind-value="id"
+       bind-arg="id"
        bind-format="./?model=datasets&category_id={0}">
       <span bind="dscount"></span> datasets
     </a>
   </td>
 
-  <td>
-    <span bind-value="updated"
+  <td class="updated">
+    <span bind-arg="updated"
           bind-lambda="human_time"></span>
 
-    <span bind-value="updated_by"
+    <span bind-arg="updated_by"
           bind-lambda="email_user"
           bind-format="({0})"></span>
   </td>

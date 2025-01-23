@@ -1,9 +1,9 @@
 <tr bind-attr="class"
-    bind-value="ok"
+    bind-arg="ok"
     bind-not="disabled">
   <td>
     <a bind-attr="href"
-       bind-value="id"
+       bind-arg="id"
        bind-format="./?model=geographies&parent_id={0}"
        bind-cond="has_subgeographies"
        title="Subgeographies">
@@ -13,7 +13,7 @@
 
   <td>
     <a bind-attr="href"
-       bind-value="id"
+       bind-arg="id"
        bind-format="./?model=datasets&geography_id={0}"
        title="Datasets">
       <i class="bi-collection"></i>
@@ -76,11 +76,11 @@
           bind-unless="indev"></span>
   </td>
 
-  <td>
-    <span bind-value="updated"
+  <td class="updated">
+    <span bind-arg="updated"
           bind-lambda="human_time"></span>
 
-    <span bind-value="updated_by"
+    <span bind-arg="updated_by"
           bind-lambda="email_user"
           bind-format="({0})"></span>
   </td>
