@@ -2,10 +2,6 @@ import {
 	email_user,
 } from './extras.js';
 
-import {
-	circles_user,
-} from './circles.js';
-
 import deployment_options from './deployment-options.js';
 
 export const base = 'categories';
@@ -798,7 +794,7 @@ function mutant_validate(newdata) {
 };
 
 function circle_validate(newdata) {
-	const c = circles_user();
+	const c = SELF.data.circles;
 
 	if (c === null) return true;
 

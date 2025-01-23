@@ -1,10 +1,6 @@
 import modal from '../lib/modal.js';
 
 import {
-	circles_user,
-} from './circles.js';
-
-import {
 	email_user,
 	external_link_base,
 } from './extras.js';
@@ -629,7 +625,7 @@ export const collection = {
 		else if (category_id)
 			params['category_id'] = `eq.${category_id}`;
 
-		const circles = circles_user();
+		const circles = SELF.data.circles;
 		if (circles)
 			params['geography_circle'] = `in.(${circles})`;
 

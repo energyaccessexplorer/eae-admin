@@ -1,10 +1,6 @@
 import modal from '../lib/modal.js';
 
 import {
-	circles_user,
-} from './circles.js';
-
-import {
 	email_user,
 	external_link_base,
 } from './extras.js';
@@ -534,9 +530,7 @@ export const collection = {
 		if (parent_id)
 			model['schema']['parent_id']['required'] = true;
 
-		const circles = circles_user();
-		if (circles)
-			params['circle'] = `in.(${circles})`;
+		params['circle'] = `in.(${SELF.data.circles})`;
 
 		return params;
 	},
