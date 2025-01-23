@@ -93,33 +93,31 @@
 
     let i;
     i = setInterval(function() {
+      const role = maybe(window.SELF, 'role');
+
+      if (!role) return;
+
       const dtnav = document.querySelector('nav#dt-nav');
       if (!dtnav) return;
 
       const links = qs('#navigation-links', nav);
 
-      const token = localStorage['token'];
+      if (['leader', 'manager', 'director', 'root'].includes(role)) {
+        links.append(ce('a', "Users", {
+          "href": "./?model=users",
+          "class": "toggleable",
+        }));
 
-      if (token) {
-        const r = jwt_decode(token).role;
-        if (['leader', 'manager', 'director', 'root'].includes(r)) {
-          links.append(ce('a', "Users", {
-            "href": "./?model=users",
-            "class": "toggleable",
-          }));
-
-          links.append(ce('a', "System Status", {
-            "href": "./?model=status",
-            "class": "toggleable",
-          }));
-        }
-
-        if (r)
-          links.append(ce('a', "Log Out", {
-            "href": "./?login",
-            "class": "toggleable",
-          }));
+        links.append(ce('a', "System Status", {
+          "href": "./?model=status",
+          "class": "toggleable",
+        }));
       }
+
+      links.append(ce('a', "Log Out", {
+        "href": "./?login",
+        "class": "toggleable",
+      }));
 
       dtnav.remove();
       document.body.prepend(nav);

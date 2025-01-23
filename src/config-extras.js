@@ -9,6 +9,17 @@ Object.assign(config, {
 	"storage_use_prefix":  true,
 	"default_model":       "geographies",
 	"landing":             false,
+	"pre_view":            async function() {
+		try {
+			const id = jwt_decode(localStorage['token']).id;
+			const u = (await dt.API.get('users', { "id": `eq.${id}` }, { "one": true }));
+
+			window.SELF = u;
+		} catch(err) {
+			console.error(err);
+			window.SELF = { "data": { "circles": [], "envs": [] } };
+		}
+	},
 });
 
 export const fetchables = {

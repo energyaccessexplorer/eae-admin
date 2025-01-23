@@ -16,6 +16,7 @@ export default [{
 	"languageOptions": {
 		"globals": {
 			...globals.browser,
+			"SELF": "writable",
 			"dt": "readonly",
 			"email_user": "readonly",
 			"external_link_base": "readonly",
