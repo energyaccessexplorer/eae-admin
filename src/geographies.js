@@ -530,7 +530,10 @@ export const collection = {
 		if (parent_id)
 			model['schema']['parent_id']['required'] = true;
 
-		params['circle'] = `in.(${SELF.data.circles})`;
+		if (SELF.role === "admin") {
+			params['circle'] = `in.(${SELF.data.circles})`;
+			params['deployment'] = `ov.{${SELF.data.envs}}`;
+		}
 
 		return params;
 	},

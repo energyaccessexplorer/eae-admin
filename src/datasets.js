@@ -625,9 +625,10 @@ export const collection = {
 		else if (category_id)
 			params['category_id'] = `eq.${category_id}`;
 
-		const circles = SELF.data.circles;
-		if (circles)
-			params['geography_circle'] = `in.(${circles})`;
+		if (SELF.role === "admin") {
+			params['geography_circle'] = `in.(${SELF.data.circles})`;
+			params['deployment'] = `ov.{${SELF.data.envs}}`;
+		}
 
 		return params;
 	},
