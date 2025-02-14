@@ -1,11 +1,8 @@
-dt.API.base = dt.config.status;
+import pgrest from '../lib/pgrest.js';
 
-const claims = jwt_decode(localStorage.getItem('token'));
-
-if (!['leader', 'manager', 'director', 'root'].includes(claims['role'])) {
-	qs(`nav#dt-nav a[href="${dt.config.base}/?model=users"]`).remove();
-	qs(`nav#dt-nav a[href="${dt.config.base}/?model=status"]`).remove();
-}
+const _api =  new pgrest();
+_api.base = dt.config.status;
+_api.flash = dt.FLASH;
 
 export const base = "tasks";
 
@@ -49,3 +46,5 @@ export const collection = {
 export const header = "System Status";
 
 export const new_disabled = true;
+
+export const api = _api;
