@@ -38,6 +38,10 @@
         position: relative;
       }
 
+      nav {
+        display: none;
+      }
+
       nav #navigation-links {
         justify-content: right !important;
       }
@@ -137,6 +141,9 @@
 
       dtnav.remove();
       document.body.prepend(nav);
+
+      nav.style.display = 'flex';
+
       clearInterval(i);
     }, 10);
   </script>
