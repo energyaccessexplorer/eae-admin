@@ -1,4 +1,5 @@
 /* eslint no-undef: "off" */
+// this file will be "cat'ed" with another "config" is there. See the duck-tape.mk
 
 Object.assign(config, {
 	"paver_endpoint":      "http://eae.localhost/paver",
@@ -15,8 +16,8 @@ Object.assign(config, {
 			const u = (await dt.API.get('users', { "id": `eq.${id}` }, { "one": true }));
 
 			window.SELF = u;
-		} catch(err) {
-			console.error(err);
+		} catch(_err) {
+			console.warn("Failed to fetch SELF (this might be OK)", _err);
 			window.SELF = { "data": { "circles": [], "envs": [] } };
 		}
 	},
