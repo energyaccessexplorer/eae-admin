@@ -32,6 +32,10 @@ export const model = {
 			break;
 		}
 
+		const d = new Date(m['last-run']);
+
+		m['last-run'] = d.toLocaleDateString() + " at " + d.toLocaleTimeString();
+
 		m['infos'] = m['info'] ? m['info'].join("\n") : "";
 
 		return m;
