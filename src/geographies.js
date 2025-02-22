@@ -14,6 +14,7 @@ import deployment_options from './deployment-options.js';
 let ADM = 0;
 
 const FLASH = dt.FLASH;
+
 const API = dt.API;
 
 export const base = 'geographies';
@@ -284,6 +285,12 @@ export const model = {
 				"editable": false,
 				"required": true,
 			},
+		},
+
+		"area": {
+			"type":     "number",
+			"nullable": true,
+			"hint":     "Area of the geography in km<sup>2</sup>",
 		},
 
 		"resolution": {
