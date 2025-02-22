@@ -796,9 +796,9 @@ function mutant_validate(newdata) {
 function circle_validate(newdata) {
 	const c = SELF.data.circles;
 
-	if (c === null) return true;
-
 	if (c.includes(newdata['circle'])) return true;
+
+	if (['root', 'director'].includes(SELF.role)) return true;
 
 	err(
 		"Circle error",
