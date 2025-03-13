@@ -8,8 +8,7 @@
   <td bind="name"
       style="font-family: monospace;"></td>
 
-  <td bind-attr="title"
-      bind-arg="features"
+  <td bind-attr-title="features"
       style="font-family: monospace;">
     <span bind="datatype"></span>
     <span bind-cond="unit"
@@ -19,8 +18,7 @@
   </td>
 
   <td style="text-align: right;">
-    <a bind-attr="href"
-       bind-arg="id"
+    <a bind-attr-href="id"
        bind-format="./?model=datasets&category_id={0}">
       <span bind="dscount"></span> datasets
     </a>
