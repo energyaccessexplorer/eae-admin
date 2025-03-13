@@ -333,7 +333,7 @@ export async function routine(obj, { edit_modal, pre }) {
 
 					const p = Object.assign(ds, payload, { "geographyid": leaf });
 
-					const f = (await fn(g, p, {}));
+					const f = (await fn(g, p, { paver_modal }));
 					await f();
 				}
 			});

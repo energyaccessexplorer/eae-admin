@@ -602,6 +602,15 @@ function raster_exists_validate(newdata, data) {
 		return false;
 	}
 
+	if (and(r, !newdata['domain'])) {
+		err(
+			"Configuration error",
+			`raster categories require a domain`,
+		);
+
+		return false;
+	}
+
 	return true;
 };
 

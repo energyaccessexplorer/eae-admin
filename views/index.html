@@ -15,7 +15,7 @@
       dt.main(config);
     </script>
 
-    <link rel="shortcut icon" type="image/png" href="/images/favicon.png">
+    <link rel="shortcut icon" type="image/png" href="https://www.energyaccessexplorer.org/images/EAE Logo_Emblem.svg">
 
     <link rel="stylesheet" href="https://www.energyaccessexplorer.org/stylesheets/style.css">
     <link rel="stylesheet" href="https://www.energyaccessexplorer.org/stylesheets/nav.css">
@@ -62,7 +62,7 @@
       }
     </style>
 
-    <title>Energy Access Explorer :: admin</title>
+    <title>Admin :: Energy Access Explorer</title>
   </head>
 
   <body></body>
@@ -95,6 +95,11 @@
     const nav = document.createElement('nav');
     nav.innerHTML = nav_html;
 
+    function maybe(o, ...path) {
+      return (o === null || o === undefined || !path.length) ? o :
+        maybe(o[path[0]], ...path.slice(1));
+    };
+
     let i;
     i = setInterval(function() {
       const role = maybe(window.SELF, 'role');
@@ -120,7 +125,7 @@
       const dtnav = document.querySelector('nav#dt-nav');
       if (!dtnav) return;
 
-      const links = qs('#navigation-links', nav);
+      const links = nav.querySelector('#navigation-links');
 
       if (['leader', 'manager', 'director', 'root'].includes(role)) {
         links.append(ce('a', "Users", {
