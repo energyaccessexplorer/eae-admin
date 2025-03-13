@@ -39,6 +39,7 @@ export const model = {
 		'geography_id',
 		'category_id',
 		'configuration',
+		'mutant_targets',
 		'category_overrides',
 		'metadata',
 		'source_files',
@@ -273,14 +274,15 @@ export const model = {
 						},
 					},
 				},
+			},
+		},
 
-				"mutant_targets": {
-					"type":     "array",
-					"nullable": true,
-					"schema":   {
-						"type": "string",
-					},
-				},
+		"mutant_targets": {
+			"type":     "array",
+			"nullable": true,
+			"validate": mutant_targets_validate,
+			"schema":   {
+				"type": "string",
 			},
 		},
 
@@ -887,8 +889,6 @@ Just delete it. `,
 
 	const t = data.type === 'polygons-timeline';
 
-	const m = data.datatype.match(/mutant-/);
-
 	const vb = or(v,b);
 
 	function attrerr(p, n) {
@@ -989,12 +989,6 @@ Just delete it. `,
 				return attrerr("features_specs", n);
 		}
 	}
-
-	if (config.mutant_targets) {
-		if (!data.datatype.match(/mutant/))
-			return unnerr("mutant_targets");
-	}
-	else if (m) reqerr("mutant_targets");
 
 	return true;
 };
@@ -1150,3 +1144,32 @@ function parse_csv(x) {
 		.filter(r => r.trim() !== "")
 		.map(e => e.split(","));
 };
+
+function mutant_targets_validate(newdata, data) {
+	const m = data.type.match(/mutant-/);
+	const t = newdata.mutant_targets;
+
+	if (!m && t) {
+		FLASH.push({
+			"type":    'error',
+			"title":   `Mutant Targets`,
+			"message": `Unnecessary attribute.
+
+Just delete it. `,
+		});
+
+		return false;
+	}
+
+	if (or(m && !t, t?.length === 0)) {
+		FLASH.push({
+			"type":    'error',
+			"title":   "Mutant targets",
+			"message": `mutant_targets should have non-zero length`,
+		});
+
+		return false;
+	}
+
+	return true;
+}
