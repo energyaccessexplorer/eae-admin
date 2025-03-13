@@ -86,7 +86,7 @@ async function payload_fill($, payload, datasets_func) {
 		"select": ["raster"],
 	}, { "one": true });
 
-	if (and($.datatype.match('raster'), !maybe(cat, 'raster', 'paver'))) {
+	if (and($.type.match('raster'), !maybe(cat, 'raster', 'paver'))) {
 		const msg = `'${$.category_name}' category raster->paver configuration is not setup!`;
 
 		FLASH.push({
@@ -104,7 +104,7 @@ async function payload_fill($, payload, datasets_func) {
 		'lines',
 		'polygons',
 		'polygons-timeline',
-	].includes($.datatype)))
+	].includes($.type)))
 		payload.simplify = maybe(cat, 'vectors', 'paver', 'simplify') || 0;
 
 	payload.config = JSON.stringify(maybe(cat, 'raster', 'paver'));
@@ -136,7 +136,7 @@ export async function routine(obj, { edit_modal, pre }) {
 	let template;
 	let header;
 
-	switch ($.datatype) {
+	switch ($.type) {
 	case 'points':
 		if ($.source_files.find(f => f.func === 'csv')) {
 			fn = csv_points;

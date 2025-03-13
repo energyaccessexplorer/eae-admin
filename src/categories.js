@@ -433,7 +433,7 @@ export const collection = {
 			'name',
 			'name_long',
 			'unit',
-			'datatype:category_datatype',
+			'datatype',
 			'timeline',
 			'analysis',
 			'raster',

@@ -154,7 +154,7 @@ function inherit_datasets() {
 		"select":        "*,category_name",
 		"geography_id":  'eq.' + this.data.parent_id,
 		"category_name": 'not.in.(indicator,timeline-indicator,boundaries,admin-tiers,outline)',
-		"datatype":      'not.in.(raster-mutant)',
+		"type":          'not.in.(raster-mutant)',
 	}).then(async datasets => {
 		const content = await remote_tmpl("geographies/paver-inherit-datasets.html");
 

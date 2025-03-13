@@ -30,7 +30,7 @@ export const model = {
 	"base": base,
 
 	"columns": [
-		"datatype",
+		"type",
 		"category_name",
 		"geography_name",
 	],
@@ -158,7 +158,7 @@ export const model = {
 					"nullable": true,
 					"default":  null,
 					"required": true,
-					"enabled":  m => and(m.datatype.match(/polygons-(valued|timeline)/), m.category_name.match(/^(timeline-)?indicator/)),
+					"enabled":  m => and(m.type.match(/polygons-(valued|timeline)/), m.category_name.match(/^(timeline-)?indicator/)),
 					"hint":     "Indicators: Subdivision level corresponds to the CSV. 0 = Entire geography.",
 				},
 
@@ -167,7 +167,7 @@ export const model = {
 					"type":     "string",
 					"required": true,
 					"enabled":  m => and(
-						m.datatype.match(/polygons-(valued|boundaries|timeline)/),
+						m.type.match(/polygons-(valued|boundaries|timeline)/),
 						m.category_name !== 'outline',                             // outlines have no data
 						!m.category_name.match(/^(timeline-)?indicator/),          // indicators inherit from the divisions[i]
 					),
@@ -177,7 +177,7 @@ export const model = {
 					"type":     "string",
 					"nullable": true,
 					"hint":     "CSV column dedicated for polygons-valued (generally indicators) and boundaries datasets",
-					"enabled":  m => m.datatype.match(/polygons-(valued|boundaries)/),
+					"enabled":  m => m.type.match(/polygons-(valued|boundaries)/),
 				},
 
 				"attributes_map": {
@@ -392,7 +392,7 @@ export const model = {
 			'polygons',
 			'polygons-boundaries',
 			'polygons-timeline',
-		].includes(m.datatype);
+		].includes(m.type);
 
 		m.deployments = m.deployment.join(',');
 
@@ -424,7 +424,7 @@ export const model = {
 				"polygons-boundaries",
 				"polygons-valued",
 				"polygons-timeline",
-			].includes(object.data.datatype)) return;
+			].includes(object.data.type)) return;
 
 			const s = maybe(object.data.source_files?.find(f => f.func === 'vectors'), 'endpoint');
 
@@ -438,7 +438,7 @@ export const model = {
 				})
 				.then(r => object.data._available_properties = Object.keys(r.features[0]['properties']));
 
-			if (object.data.datatype === 'points') {
+			if (object.data.type === 'points') {
 				const ps = maybe(object.data.source_files?.find(f => f.func === 'csv'), 'endpoint');
 
 				if (ps) fetch(ps).then(r => r.text())
@@ -595,7 +595,7 @@ export const collection = {
 	"endpoint": function() {
 		const attrs = [
 			'id',
-			'datatype',
+			'type',
 			'deployment',
 			'flagged',
 			'name',
@@ -667,7 +667,7 @@ export async function init() {
 				"name_long",
 				"name",
 				"category_name",
-				"datatype",
+				"type",
 				"deployment",
 				"flagged",
 				"configuration",
@@ -702,7 +702,7 @@ function source_files_requirements(m) {
 	let n;
 
 	// 'points' are handled later
-	switch (m.datatype) {
+	switch (m.type) {
 	case 'polygons':
 	case 'lines':
 		n = ['vectors'];
@@ -744,7 +744,7 @@ function source_files_requirements(m) {
 async function source_files_validate(newdata, data) {
 	let reqs = source_files_requirements(data);
 
-	if (data.datatype === 'points') {
+	if (data.type === 'points') {
 		const l = newdata.source_files.length;
 		if (l === 0)
 			reqs = ['vectors', 'csv'];
@@ -881,11 +881,11 @@ Just delete it. `,
 
 	const i = data.category.name.match(/indicator/);
 
-	const b = data.datatype === 'polygons-boundaries';
+	const b = data.type === 'polygons-boundaries';
 
-	const v = data.datatype === 'polygons-valued';
+	const v = data.type === 'polygons-valued';
 
-	const t = data.datatype === 'polygons-timeline';
+	const t = data.type === 'polygons-timeline';
 
 	const m = data.datatype.match(/mutant-/);
 
@@ -1079,12 +1079,12 @@ async function features_table_modal(url) {
 	}).show();
 };
 
-async function map_modal(url, gid, datatype) {
+async function map_modal(url, gid, type) {
 	const g = await dt.API.get('geographies', { "id": `eq.${gid}` }, { "one": true });
 	const e = g.envelope;
 
 	const content = document.createElement('iframe');
-	content.src = `/mapbox-mini.html?endpoint=${url}&datatype=${datatype}&W=${e[0]}&S=${e[1]}&E=${e[2]}&N=${e[3]}`;
+	content.src = `./mapbox-mini.html?endpoint=${url}&type=${type}&W=${e[0]}&S=${e[1]}&E=${e[2]}&N=${e[3]}`;
 	content.width = 600;
 	content.height = 600;
 
@@ -1096,7 +1096,7 @@ async function map_modal(url, gid, datatype) {
 };
 
 function show_modal(data, input) {
-	const datatype = this.datatype;
+	const type = this.type;
 
 	const g = input.closest('.input-group');
 	const l = qs('label', g);
@@ -1127,16 +1127,16 @@ function show_modal(data, input) {
 		if (data.func !== 'vectors') return "";
 
 		let icon;
-		if (datatype === "lines")
+		if (type === "lines")
 			icon = "align-center";
-		else if (datatype === "points")
+		else if (type === "points")
 			icon = "geo-fill";
-		else if (datatype === "polygons")
+		else if (type === "polygons")
 			icon = "hexagon";
 
 		const a = ce('a', ce('i', null, { "class": `bi-${icon}` }));
 		a.style = "margin-right: 1em;";
-		a.onclick = _ => map_modal.call(this, data.endpoint, gid, datatype);
+		a.onclick = _ => map_modal.call(this, data.endpoint, gid, type);
 
 		return a;
 	};

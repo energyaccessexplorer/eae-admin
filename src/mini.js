@@ -210,7 +210,7 @@ async function plot_polygons(endpoint, _, map) {
 export default async function() {
 	const url = new URL(location);
 	const endpoint = url.searchParams.get('endpoint');
-	const datatype = url.searchParams.get('datatype');
+	const type = url.searchParams.get('type');
 
 	const N = +url.searchParams.get('N');
 	const E = +url.searchParams.get('E');
@@ -232,16 +232,16 @@ export default async function() {
 	const args = [endpoint, coordinates, map];
 
 	let fn;
-	if (datatype === 'raster')
+	if (type === 'raster')
 		fn = await plot_raster(...args);
 
-	if (datatype === 'polygons')
+	if (type === 'polygons')
 		fn = await plot_polygons(...args);
 
-	if (datatype === 'points')
+	if (type === 'points')
 		fn = await plot_points(...args);
 
-	if (datatype === 'lines')
+	if (type === 'lines')
 		fn = await plot_lines(...args);
 
 	if (map.loaded()) fn();
