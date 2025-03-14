@@ -38,7 +38,7 @@ export const model = {
 	"clonable_attrs": [
 		'geography_id',
 		'category_id',
-		'configuration',
+		'vectors_configuration',
 		'mutant_targets',
 		'category_overrides',
 		'metadata',
@@ -148,11 +148,11 @@ export const model = {
 			},
 		},
 
-		"configuration": {
+		"vectors_configuration": {
 			"type":     "object",
-			"label":    "Configuration",
+			"label":    "Vectors Configuration",
 			"nullable": true,
-			"validate": configuration_attributes_validate,
+			"validate": vectors_configuration_validate,
 			"schema":   {
 				"divisions_tier": {
 					"type":     "number",
@@ -672,7 +672,7 @@ export async function init() {
 				"type",
 				"deployment",
 				"flagged",
-				"configuration",
+				"vectors_configuration",
 				"category_overrides",
 				"source_files",
 				"processed_files",
@@ -802,7 +802,7 @@ async function vectors_csv_validate(newdata, data) {
 
 		FLASH.push({
 			"type":    'error',
-			"title":   "Configuration",
+			"title":   "Vectors Configuration",
 			"message": `CSV file rows count (${newdata._csv.length - 1}) and Vectors features count (${data._features.length}) must match`,
 		});
 
@@ -859,9 +859,23 @@ ${_t}`,
 	return true;
 };
 
-function configuration_attributes_validate(newdata, data) {
-	const config = newdata.configuration;
+function vectors_configuration_validate(newdata, data) {
+	const config = newdata.vectors_configuration;
 	const selected = data._existing_properties;
+
+	if (!data.category.vectors && !!newdata.vectors_configuration) {
+		FLASH.clear();
+
+		FLASH.push({
+			"type":    'error',
+			"title":   "Vectors Configuration",
+			"message": `This datasets does not need any of it.
+
+Just delete it. `,
+		});
+
+		return false;
+	}
 
 	const o = data.category_name === 'outline';
 
@@ -870,7 +884,7 @@ function configuration_attributes_validate(newdata, data) {
 
 		FLASH.push({
 			"type":    'error',
-			"title":   "Configuration",
+			"title":   "Vectors Configuration",
 			"message": `Outlines do not need any of it.
 
 Just delete it. `,
@@ -896,7 +910,7 @@ Just delete it. `,
 
 		FLASH.push({
 			"type":    'error',
-			"title":   `Configuration -> ${p}`,
+			"title":   `Vectors Configuration -> ${p}`,
 			"message": `'${n}' attribute does not belong.
 
 Available values are: ${selected.join(', ')}`,
@@ -910,7 +924,7 @@ Available values are: ${selected.join(', ')}`,
 
 		FLASH.push({
 			"type":    'error',
-			"title":   `Configuration -> ${p}`,
+			"title":   `Vectors Configuration -> ${p}`,
 			"message": `'${n}' attribute does not belong.
 
 Available values are: ${data._existing_columns.join(', ')}`,
@@ -924,7 +938,7 @@ Available values are: ${data._existing_columns.join(', ')}`,
 
 		FLASH.push({
 			"type":    'error',
-			"title":   `Configuration -> ${p}`,
+			"title":   `Vectors Configuration -> ${p}`,
 			"message": `Unnecessary attribute.
 
 Just delete it. `,
@@ -938,7 +952,7 @@ Just delete it. `,
 
 		FLASH.push({
 			"type":    'error',
-			"title":   `Configuration -> ${p}`,
+			"title":   `Vectors Configuration -> ${p}`,
 			"message": `Attribute is required.`,
 		});
 

@@ -402,12 +402,12 @@ ${msg}`;
 
 async function outline($, payload, { paver_modal }) {
 	if (paver_modal)
-		paver_modal.content.querySelector('form input[name=field]').value = maybe($, 'configuration', 'vectors_id');
+		paver_modal.content.querySelector('form input[name=field]').value = maybe($, 'vectors_configuration', 'vectors_id');
 
 	return function() {
 		payload.field = paver_modal ?
 			paver_modal.content.querySelector('form input[name=field]').value :
-			maybe($, 'configuration', 'vectors_id');
+			maybe($, 'vectors_configuration', 'vectors_id');
 
 		return submit('admin-boundaries', payload, { paver_modal })
 			.then(r => r.json())
@@ -452,7 +452,7 @@ async function outline($, payload, { paver_modal }) {
 };
 
 async function admin_boundaries($, payload, { paver_modal }) {
-	paver_modal.content.querySelector('form input[name=field]').value = maybe($, 'configuration', 'vectors_id');
+	paver_modal.content.querySelector('form input[name=field]').value = maybe($, 'vectors_configuration', 'vectors_id');
 
 	return function() {
 		payload.field = paver_modal.content.querySelector('form input[name=field]').value;
@@ -491,16 +491,16 @@ async function admin_boundaries($, payload, { paver_modal }) {
 
 async function clip_proximity($, payload, { paver_modal }) {
 	let f;
-	if (f = maybe($, 'configuration', 'vectors_id'))
+	if (f = maybe($, 'vectors_configuration', 'vectors_id'))
 		payload.fields = payload.fields.push('vectors_id');
 
-	if (f = maybe($, 'configuration', 'attributes_map'))
+	if (f = maybe($, 'vectors_configuration', 'attributes_map'))
 		payload.fields = payload.fields.concat(f.map(x => x['dataset']));
 
-	if (f = maybe($, 'configuration', 'features_specs'))
+	if (f = maybe($, 'vectors_configuration', 'features_specs'))
 		payload.fields = payload.fields.concat(f.map(x => x['key']));
 
-	if (f = maybe($, 'configuration', 'properties_search'))
+	if (f = maybe($, 'vectors_configuration', 'properties_search'))
 		payload.fields = payload.fields.concat(f);
 
 	payload.fields = Array.from(new Set(payload.fields)).sort();
@@ -550,13 +550,13 @@ async function clip_proximity($, payload, { paver_modal }) {
 
 async function csv_points($, payload, { paver_modal }) {
 	let f;
-	if (f = maybe($, 'configuration', 'attributes_map'))
+	if (f = maybe($, 'vectors_configuration', 'attributes_map'))
 		payload.fields = payload.fields.concat(f.map(x => x['dataset']));
 
-	if (f = maybe($, 'configuration', 'features_specs'))
+	if (f = maybe($, 'vectors_configuration', 'features_specs'))
 		payload.fields = payload.fields.concat(f.map(x => x['key']));
 
-	if (f = maybe($, 'configuration', 'properties_search'))
+	if (f = maybe($, 'vectors_configuration', 'properties_search'))
 		payload.fields = payload.fields.concat(f);
 
 	payload.fields = Array.from(new Set(payload.fields)).sort();
@@ -666,7 +666,7 @@ async function crop_raster($, payload, { paver_modal }) {
 
 async function simplify($, payload, { paver_modal }) {
 	return function() {
-		payload.field = maybe($, 'configuration', 'vectors_id');
+		payload.field = maybe($, 'vectors_configuration', 'vectors_id');
 
 		return submit('simplify', payload, { paver_modal })
 			.then(r => r.json())
@@ -724,9 +724,9 @@ async function subgeography(r, { results, cid, vectors, csv, obj, resolution }) 
 	const d = new dt.object({
 		"module": datasets_module,
 		"data":   {
-			"category_id":   cid,
-			"geography_id":  gid,
-			"configuration": {
+			"category_id":           cid,
+			"geography_id":          gid,
+			"vectors_configuration": {
 				"vectors_id": vectors.id,
 			},
 			source_files,
