@@ -39,7 +39,7 @@ export const model = {
 		'geography_id',
 		'category_id',
 		'vectors_configuration',
-		'mutant_targets',
+		'mutant_configuration',
 		'category_overrides',
 		'metadata',
 		'source_files',
@@ -277,12 +277,19 @@ export const model = {
 			},
 		},
 
-		"mutant_targets": {
-			"type":     "array",
+		"mutant_configuration": {
+			"type":     "object",
+			"label":    "Mutant Configuration",
 			"nullable": true,
-			"validate": mutant_targets_validate,
+			"validate": mutant_configuration_validate,
 			"schema":   {
-				"type": "string",
+				"hosts": {
+					"type":     "array",
+					"nullable": true,
+					"schema":   {
+						"type": "string",
+					},
+				},
 			},
 		},
 
@@ -1159,14 +1166,14 @@ function parse_csv(x) {
 		.map(e => e.split(","));
 };
 
-function mutant_targets_validate(newdata, data) {
-	const m = data.type.match(/mutant-/);
-	const t = newdata.mutant_targets;
+function mutant_configuration_validate(newdata, data) {
+	const m = data.type.match(/mutant/);
+	const c = newdata.mutant_configuration;
 
-	if (!m && t) {
+	if (!m && c) {
 		FLASH.push({
 			"type":    'error',
-			"title":   `Mutant Targets`,
+			"title":   `Mutant Configuration`,
 			"message": `Unnecessary attribute.
 
 Just delete it. `,
@@ -1175,11 +1182,23 @@ Just delete it. `,
 		return false;
 	}
 
-	if (or(m && !t, t?.length === 0)) {
+	if (!m) return true;
+
+	if (!c) {
 		FLASH.push({
 			"type":    'error',
-			"title":   "Mutant targets",
-			"message": `mutant_targets should have non-zero length`,
+			"title":   "Mutant Configuration",
+			"message": `mutant datasets require it`,
+		});
+
+		return false;
+	}
+
+	if (!maybe(c, 'hosts', 'length')) {
+		FLASH.push({
+			"type":    'error',
+			"title":   "Mutant Configuration",
+			"message": `mutant_datasets -> hosts should have non-zero length`,
 		});
 
 		return false;
