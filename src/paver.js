@@ -452,7 +452,8 @@ async function outline($, payload, { paver_modal }) {
 };
 
 async function admin_boundaries($, payload, { paver_modal }) {
-	paver_modal.content.querySelector('form input[name=field]').value = maybe($, 'vectors_configuration', 'vectors_id');
+	if (paver_modal)
+		paver_modal.content.querySelector('form input[name=field]').value = maybe($, 'vectors_configuration', 'vectors_id');
 
 	return function() {
 		payload.field = paver_modal.content.querySelector('form input[name=field]').value;
