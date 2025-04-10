@@ -85,6 +85,12 @@ export const model = {
 			"hint": "Flagging a dataset will automatically remove it from the production environment for revision. Flagged datasets can be reviewed in the staging environment. Unflagging does not add the dataset back into the production environment.",
 		},
 
+		"private": {
+			"type":    "boolean",
+			"hint":    "Private datasets require permissions for admins and guests to access",
+			"default": false,
+		},
+
 		"deployment": {
 			"type":     "array",
 			"unique":   true,
@@ -573,6 +579,29 @@ export const model = {
 			ig.prepend(button);
 		},
 		async function(object, form) {
+			const permissions = await API.get('datasets_permissions', {
+				"select":     ["*", "user(email)"],
+				"dataset_id": `eq.${object.data.id}`,
+			});
+
+			const d = ce('details');
+			const s = ce('summary', ce('label', 'permissions'));
+
+			const a = ce('a', ce('i', null, { "class": "bi-pencil-fill" }));
+			a.style = "margin-left: 1em;";
+			a.onclick = _ => window.location = `./?model=datasets_permissions&dataset_id=${object.data.id}`;
+
+			s.append(a);
+			d.append(s);
+
+			const x = ce('div', null, { "id": "badges" });
+			x.append(...permissions.map(f => ce('span', `${f.user.email} (${f.type})`, { "class": "badge" })));
+
+			d.append(x);
+
+			qs('fieldset', form).append(d);
+		},
+		async function(object, form) {
 			const follows = await API.get('follows', { "dataset_id": `eq.${object.data.id}` });
 			const d = ce('details');
 			const s = ce('summary', ce('label', 'follows'));
@@ -606,6 +635,7 @@ export const collection = {
 			'id',
 			'type',
 			'deployment',
+			'private',
 			'flagged',
 			'name',
 			'category(*)',

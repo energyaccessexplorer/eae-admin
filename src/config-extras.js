@@ -77,6 +77,22 @@ export const fetchables = {
 			};
 		},
 	},
+
+	"users": {
+		"primary":     'id',
+		"placeholder": "email",
+		"options":     v => ({
+			"table": 'users',
+			"query": {
+				"select": ['id', 'email'],
+				"email":  `eq.${v}`,
+			},
+			"input":      x => x['id'],
+			"descriptor": x => x.email,
+			"value":      v,
+			"threshold":  7,
+		}),
+	},
 };
 
 export const navlist = [

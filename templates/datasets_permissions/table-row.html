@@ -1,0 +1,22 @@
+<tr>
+  <td>
+    <a dt-edit class="bi-pencil-fill"></a>
+  </td>
+
+  <td>
+    <span bind="type" class="monospace"></span>
+  </td>
+
+  <td>
+    <span bind="dataset.name"></span>
+    <span bind-if="dataset.name">-</span>
+    <span bind="dataset.category_name"></span>
+  </td>
+
+  <td bind="dataset.geography_name"></td>
+
+  <td>
+    <span bind="user.name"></span>
+    <span bind="user.email"></span>
+  </td>
+</tr>

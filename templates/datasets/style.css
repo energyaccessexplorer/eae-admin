@@ -6,11 +6,15 @@ body > main .actions-drawer a {
   display: inline-block;
 }
 
-body > main td:nth-of-type(5),
-body > main td:nth-of-type(6),
+body > main td:nth-of-type(6) {
+  text-align: center;
+}
+
 body > main td:nth-of-type(7),
 body > main td:nth-of-type(8),
-body > main td:nth-of-type(9) {
+body > main td:nth-of-type(9),
+body > main td:nth-of-type(10),
+body > main td:nth-of-type(11) {
   text-align: center;
   font-size: 0.9em;
   padding: 0.7em 0.9em;
