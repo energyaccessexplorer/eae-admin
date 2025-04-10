@@ -8,9 +8,8 @@ Object.assign(config, {
 	"bucket":              "http://eae.localhost/bucket",
 	"storage_track_files": false,
 	"storage_use_prefix":  true,
-	"default_model":       "geographies",
-	"landing":             false,
-	"pre_view":            async function() {
+	"landing":             _ => window.location = config.base + `/?model=geographies`,
+	"pre_view":            async _ => {
 		try {
 			const id = jwt_decode(localStorage['token']).id;
 			const u = (await dt.API.get('users', { "id": `eq.${id}` }, { "one": true }));
@@ -27,55 +26,49 @@ export const fetchables = {
 	"geographies": {
 		"primary":     'name',
 		"placeholder": "name",
-		"options":     function(v) {
-			return {
-				"table": 'geographies',
-				"query": {
-					"select": ['id', 'name'],
-					"name":   `ilike.*${v}*`,
-				},
-				"input":      x => x['id'],
-				"descriptor": x => x['name'],
-				"value":      v,
-				"threshold":  2,
-			};
-		},
+		"options":     v => ({
+			"table": 'geographies',
+			"query": {
+				"select": ['id', 'name'],
+				"name":   `ilike.*${v}*`,
+			},
+			"input":      x => x['id'],
+			"descriptor": x => x['name'],
+			"value":      v,
+			"threshold":  2,
+		}),
 	},
 
 	"categories": {
 		"primary":     'id',
 		"placeholder": "name",
-		"options":     function(v) {
-			return {
-				"table": 'categories',
-				"query": {
-					"select": ['id', 'name', 'name_long', 'unit'],
-					"name":   `ilike.*${v}*`,
-				},
-				"input":      x => x['id'],
-				"descriptor": x => `${x.name} - ${x.name_long}`,
-				"value":      v,
-				"threshold":  2,
-			};
-		},
+		"options":     v => ({
+			"table": 'categories',
+			"query": {
+				"select": ['id', 'name', 'name_long', 'unit'],
+				"name":   `ilike.*${v}*`,
+			},
+			"input":      x => x['id'],
+			"descriptor": x => `${x.name} - ${x.name_long}`,
+			"value":      v,
+			"threshold":  2,
+		}),
 	},
 
 	"datasets": {
 		"primary":     'id',
 		"placeholder": "category_name",
-		"options":     function(v) {
-			return {
-				"table": 'datasets',
-				"query": {
-					"select":        ['id', 'name', 'name_long', 'geography_name', 'category_name', 'category_id'],
-					"category_name": `ilike.*${v}*`,
-				},
-				"input":      x => x['id'],
-				"descriptor": x => `${x.geography_name} - ${x.category_name} -- ${x.name} -- ${x.name_long}`,
-				"value":      v,
-				"threshold":  2,
-			};
-		},
+		"options":     v => ({
+			"table": 'datasets',
+			"query": {
+				"select":        ['id', 'name', 'name_long', 'geography_name', 'category_name', 'category_id'],
+				"category_name": `ilike.*${v}*`,
+			},
+			"input":      x => x['id'],
+			"descriptor": x => `${x.geography_name} - ${x.category_name} -- ${x.name} -- ${x.name_long}`,
+			"value":      v,
+			"threshold":  2,
+		}),
 	},
 
 	"users": {

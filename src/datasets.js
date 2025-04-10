@@ -423,15 +423,16 @@ export const model = {
 	},
 
 	"edit_modal_jobs": [
-		// raster
-		// raster-mutant
-		// raster-valued
-		// raster-timeline
-		// points-timeline
-		// lines-timeline
-		// table
-		//
 		async function(object) {
+			//
+			// raster
+			// raster-mutant
+			// raster-valued
+			// raster-timeline
+			// points-timeline
+			// lines-timeline
+			// table
+			//
 			if (![
 				"lines",
 				"points",
@@ -1235,4 +1236,4 @@ Just delete it. `,
 	}
 
 	return true;
-}
+};
