@@ -305,12 +305,15 @@ export const model = {
 			"hint": "Flagging a geography will automatically remove it from the production environment for revision. Flagged geographies can be reviewed in the staging environment. Unflagging does not add the geography back into the production environment",
 		},
 
-		"circle": {
-			"type":     "string",
-			"label":    "Circle",
-			"pattern":  "^[a-z][a-z0-9\\-]+[^\\-]$",
-			"default":  "public",
-			"required": true,
+		"circles": {
+			"type":      "array",
+			"nullable":  false,
+			"collapsed":  false,
+			"schema":    {
+				"type":     "string",
+				"pattern":  "^[a-z][a-z0-9\\-]+[^\\-]$",
+				"required": true,
+			},
 		},
 
 		"configuration": {
@@ -537,10 +540,8 @@ export const collection = {
 		if (parent_id)
 			model['schema']['parent_id']['required'] = true;
 
-		if (SELF.role === "admin") {
-			params['circle'] = `in.(${SELF.data.circles})`;
-			params['deployment'] = `ov.{${SELF.data.envs}}`;
-		}
+		if (['admin', 'leader', 'manager'].includes(SELF.role))
+			params['with_access'] = 'is.true';
 
 		return params;
 	},

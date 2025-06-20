@@ -1,0 +1,16 @@
+<tr>
+  <td>
+    <a dt-edit class="bi-pencil-fill"></a>
+  </td>
+
+  <td>
+    <a bind-attr-href="user_id"
+       bind-format="./?model=users&id={0}">
+      <span bind="user.email"></span>
+    </a>
+  </td>
+
+  <td bind="circle"></td>
+
+  <td bind="deployment"></td>
+</tr>

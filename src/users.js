@@ -22,17 +22,13 @@ export const model = {
 			"default": false,
 		},
 
-		"data": {
-			"type": "json",
-		},
-
 		"about": {
 			"type": "json",
 		},
 	},
 
 	"edit_modal_jobs": [
-		async function(object, form) {
+		async function follows(object, form) {
 			const follows = await dt.API.get('follows', {
 				"select": ['*', 'dataset:datasets(info)'],
 				"email":  `eq.${object.data.email}`,
@@ -51,6 +47,25 @@ export const model = {
 
 			qs('fieldset', form).append(d);
 		},
+		async function access(object, form) {
+			const follows = await dt.API.get('access', {
+				"select":  ['*'],
+				"user_id": `eq.${object.data.id}`,
+			});
+			const d = ce('details', null, { "open": '' });
+			d.append(ce('summary', ce('label', ce('a', 'access', { "href": `./?model=access&user_id=${object.data.id}` }))));
+
+			const x = ce('div', null, { "id": "badges" });
+			x.append(...follows.map(a => ce(
+				'span',
+				ce('a', `${a.circle} - ${a.deployment}`, { "href": `./?model=access&user_id=${a.user_id}&edit_model=${a.user_id},${a.circle},${a.deployment}` }),
+				{ "class": "badge" },
+			)));
+
+			d.append(x);
+
+			qs('fieldset', form).append(d);
+		},
 	],
 };
 
@@ -62,7 +77,6 @@ export const collection = {
 			'id',
 			'email',
 			'role',
-			'data',
 			'about',
 		],
 		"order": 'email.asc',

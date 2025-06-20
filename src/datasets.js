@@ -643,7 +643,7 @@ export const collection = {
 			'category_id',
 			'category_name',
 			'geography_name',
-			'geography_circle',
+			'circles',
 			'geography_id',
 			'content_date:metadata->>content_date',
 			'created',
@@ -657,17 +657,12 @@ export const collection = {
 		if (dataset_id)
 			params['id'] = `eq.${dataset_id}`;
 
-		else if (geography_id) {
-			params['geography_id'] = `eq.${geography_id}`;
-			params['order'] = ['name.asc'];
-		}
-
 		else if (category_id)
 			params['category_id'] = `eq.${category_id}`;
 
-		if (SELF.role === "admin") {
-			params['geography_circle'] = `in.(${SELF.data.circles})`;
-			params['deployment'] = `ov.{${SELF.data.envs}}`;
+		else if (geography_id) {
+			params['geography_id'] = `eq.${geography_id}`;
+			params['order'] = ['name.asc'];
 		}
 
 		return params;
