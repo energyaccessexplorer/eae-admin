@@ -415,7 +415,6 @@ export const model = {
 		m.instaging = m.deployment.indexOf("staging") > -1;
 		m.intest = m.deployment.indexOf("test") > -1;
 		m.intraining = m.deployment.indexOf("training") > -1;
-		m.indev = m.deployment.indexOf("dev") > -1;
 
 		m.ok = !m.flagged;
 

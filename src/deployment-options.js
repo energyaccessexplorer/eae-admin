@@ -1,1 +1,1 @@
-export default ['production', 'staging', 'training', 'test', 'dev'];
+export default ['production', 'staging', 'training', 'test'];
