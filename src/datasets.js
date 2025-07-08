@@ -96,8 +96,10 @@ export const model = {
 			"unique":   true,
 			"hint":     "Select the environment(s) where the dataset will be deployed.",
 			"validate": deployments_production_content_date_validate,
+			"required": true,
+			"nullable": false,
 			"schema":   {
-				"type":     "string",
+				"type":     "select",
 				"options":  deployment_options,
 				"required": true,
 			},
