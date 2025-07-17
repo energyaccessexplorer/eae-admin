@@ -2,7 +2,17 @@ import {
 	email_user,
 } from './extras.js';
 
+import {
+	and,
+	human_time,
+	maybe,
+	or,
+	qs,
+} from '../lib/helpers.js';
+
 import deployment_options from './deployment-options.js';
+
+window.human_time = human_time;
 
 export const base = 'categories';
 

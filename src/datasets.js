@@ -9,9 +9,21 @@ import {
 	routine as paver_routine,
 } from './paver.js';
 
+import {
+	and,
+	ce,
+	fake_blob_download,
+	human_time,
+	maybe,
+	or,
+	qs,
+	until,
+} from '../lib/helpers.js';
+
 import deployment_options from './deployment-options.js';
 
 window.email_user = email_user;
+window.human_time = human_time;
 
 const FLASH = dt.FLASH;
 const API = dt.API;

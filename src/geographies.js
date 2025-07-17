@@ -5,6 +5,17 @@ import {
 	external_link_base,
 } from './extras.js';
 
+import {
+	and,
+	ce,
+	human_time,
+	maybe,
+	or,
+	qs,
+	remote_tmpl,
+	until,
+} from '../lib/helpers.js';
+
 import * as paver from './paver.js';
 
 import * as datasets_module from './datasets.js';
@@ -22,6 +33,7 @@ export const base = 'geographies';
 export const header = "Geographies";
 
 window.email_user = email_user;
+window.human_time = human_time;
 
 export async function init() {
 	const d = 'body main header .actions-drawer';

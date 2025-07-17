@@ -4,8 +4,6 @@
   <head>
     <meta charset="utf-8">
 
-    <script src="./lib/helpers.js"></script>
-
     <script type="module">
       import dt from './lib/dt.js';
       import * as config from './config.js';
@@ -67,7 +65,12 @@
 
   <body></body>
 
-  <script>
+  <script type="module">
+    import {
+      ce,
+      maybe,
+    } from './lib/helpers.js';
+
     const nav_html = `
       <input id="toggle" class="no-desktop" type="checkbox">
 
@@ -94,11 +97,6 @@
 
     const nav = document.createElement('nav');
     nav.innerHTML = nav_html;
-
-    function maybe(o, ...path) {
-      return (o === null || o === undefined || !path.length) ? o :
-        maybe(o[path[0]], ...path.slice(1));
-    };
 
     let i;
     i = setInterval(function() {

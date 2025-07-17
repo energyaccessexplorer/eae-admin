@@ -1,3 +1,9 @@
+import {
+	ce,
+	maybe,
+	qs,
+} from '../lib/helpers.js';
+
 const claims = jwt_decode(localStorage.getItem('token'));
 
 if (!['leader', 'manager', 'director', 'root'].includes(claims['role']))

@@ -12,6 +12,15 @@ import {
 
 import * as datasets_module from './datasets.js';
 
+import {
+	and,
+	ce,
+	maybe,
+	qs,
+	remote_tmpl,
+	uuid,
+} from '../lib/helpers.js';
+
 const FLASH = dt.FLASH;
 const API = dt.API;
 
