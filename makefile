@@ -1,7 +1,4 @@
-default: lint dtbuild
-
-lint:
-	./bin/lint ./src
+default: lint build
 
 deps:
 	DEST=./dist/lib ./bin/deps

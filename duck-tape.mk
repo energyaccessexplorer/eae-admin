@@ -12,7 +12,10 @@ DT_BASE = "/"
 .error "DT_DEST is not defined. Hej då."
 .endif
 
-dtbuild:
+lint:
+	eslint --format unix --fix ./src
+
+build:
 	@mkdir -p src images templates views
 
 	@rsync -r src ${DIST}/
@@ -43,7 +46,7 @@ dtbuild:
 
 	@rm -f tmpconfig
 
-dtsync:
+sync:
 	@rsync -OPvr \
 		--copy-links \
 		--checksum \
@@ -51,7 +54,7 @@ dtsync:
 		${DIST}/ \
 		${DT_HOST}:${DT_DEST}
 
-dtsynced:
+synced:
 	@rsync -OPr \
 		--info=FLIST0 \
 		--dry-run \
@@ -61,5 +64,5 @@ dtsynced:
 		${DIST}/ \
 		${DT_HOST}:${DT_DEST}
 
-dtdeploy: envpatchreverse dtbuild dtsync envpatch
-	bmake dtbuild env=development
+deploy: envpatchreverse build sync envpatch
+	bmake build env=development

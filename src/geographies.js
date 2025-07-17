@@ -278,11 +278,11 @@ export const model = {
 		},
 
 		"deployment": {
-			"type":   "array",
-			"hint":   "Select the environments where the geography will be deployed",
+			"type":     "array",
+			"hint":     "Select the environments where the geography will be deployed",
 			"required": true,
 			"nullable": false,
-			"schema": {
+			"schema":   {
 				"type":     "select",
 				"options":  deployment_options,
 				"required": true,
