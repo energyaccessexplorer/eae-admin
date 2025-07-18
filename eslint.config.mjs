@@ -7,7 +7,7 @@ import { FlatCompat } from "@eslint/eslintrc";
 const compat = new FlatCompat({
 	"baseDirectory": path.dirname(fileURLToPath(import.meta.url)),
 	"recommendedConfig": js.configs.recommended,
-	"allConfig": js.configs.all
+	"allConfig": js.configs.all,
 });
 
 export default [{
@@ -18,14 +18,11 @@ export default [{
 			...globals.browser,
 			"SELF": "writable",
 			"dt": "readonly",
-			"modal": "readonly",
-			"pgrest": "readonly",
 			"jwt_decode": "readonly"
 		},
 		"ecmaVersion": "latest",
 		"sourceType": "module",
 	},
-
 	"rules": {
 		"comma-dangle": ["error", "always-multiline"],
 		"indent": ["error", "tab"],

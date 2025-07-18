@@ -318,6 +318,7 @@ export const model = {
 			"label":    "Category Overrides",
 			"nullable": true,
 			"hint":     "Category overrides enable users to override category-level settings to customize dataset configuration for a specific geography. To override a category-level setting, import the GeoJSON section of interest, and enter the values to modify.",
+			"schema":   null,
 		},
 
 		"metadata": {
@@ -373,7 +374,7 @@ export const model = {
 
 				"content_date": {
 					"type":     "string",
-					"pattern":  "^[0-9]{4}(-[0-9]{4})?$",
+					"pattern":  "^[0-9]{4}$",
 					"nullable": true,
 					"hint":     "Date of the dataset content",
 				},
