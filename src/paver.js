@@ -252,7 +252,7 @@ export async function routine(obj, { edit_modal, pre }) {
 
 				const changes = [];
 
-				for (let k in r) {
+				for (const k in r) {
 					const d = typeof $[k];
 
 					switch (d) {
@@ -363,10 +363,7 @@ async function submit(routine, payload, { paver_modal, pre }) {
 	const body = [];
 
 	for (const p in payload)
-		body.push(
-			encodeURIComponent(p) +
-				"=" +
-				encodeURIComponent(payload[p]));
+		body.push(encodeURIComponent(p) + "=" + encodeURIComponent(payload[p]));
 
 	const infopre = pre || (paver_modal?.content || document).querySelector('#infopre');
 

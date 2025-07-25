@@ -8,7 +8,7 @@ Object.assign(config, {
 	"bucket":              "http://eae.localhost/bucket",
 	"storage_track_files": false,
 	"storage_use_prefix":  true,
-	"landing":             _ => window.location = config.base + `/?model=geographies`,
+	"landing":             config.base + "/?model=geographies",
 	"pre_view":            async _ => {
 		try {
 			const id = jwt_decode(localStorage['token']).id;

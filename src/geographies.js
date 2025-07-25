@@ -540,7 +540,7 @@ export const collection = {
 		const params = { select };
 		const url = new URL(location);
 		const geography_id = url.searchParams.get('id');
-		let adm = url.searchParams.get('adm');
+		const adm = url.searchParams.get('adm');
 		const parent_id = url.searchParams.get('parent_id');
 
 		if (geography_id)

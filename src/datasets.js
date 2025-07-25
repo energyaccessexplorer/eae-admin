@@ -523,7 +523,7 @@ export const model = {
 						let metadata;
 						if (!r[0] || !(metadata = r[0]['metadata'])) return;
 
-						for (let k in metadata)
+						for (const k in metadata)
 							metadatadetails.querySelector(`[name=${k}]`).value = metadata[k];
 					});
 			};
@@ -581,7 +581,7 @@ export const model = {
 					m.hide();
 				};
 
-				for (let k of ['analysis', 'controls', 'colorstops', 'description', 'domain', 'domain_init', 'metadata', 'raster', 'vectors'])
+				for (const k of ['analysis', 'controls', 'colorstops', 'description', 'domain', 'domain_init', 'metadata', 'raster', 'vectors'])
 					select.append(ce('option', k));
 
 				m.show();

@@ -1,52 +1,48 @@
 import globals from "globals";
-import path from "node:path";
-import { fileURLToPath } from "node:url";
 import js from "@eslint/js";
-import { FlatCompat } from "@eslint/eslintrc";
 
-const compat = new FlatCompat({
-	"baseDirectory": path.dirname(fileURLToPath(import.meta.url)),
-	"recommendedConfig": js.configs.recommended,
-	"allConfig": js.configs.all,
-});
-
-export default [{
-	"ignores": ["lib/*.js"],
-}, ...compat.extends("eslint:recommended"), {
-	"languageOptions": {
-		"globals": {
-			...globals.browser,
-			"SELF": "writable",
-			"dt": "readonly",
-			"jwt_decode": "readonly"
-		},
-		"ecmaVersion": "latest",
-		"sourceType": "module",
+export default [
+	{
+		"ignores": ["lib/*.js"],
 	},
-	"rules": {
-		"comma-dangle": ["error", "always-multiline"],
-		"indent": ["error", "tab"],
-		"key-spacing": ["error", {
-			"align": {
-				"beforeColon": false,
-				"afterColon": true,
-				"on": "value",
-				"mode": "minimum",
+	js.configs.recommended,
+	{
+		"languageOptions": {
+			"globals": {
+				...globals.browser,
+				"SELF": "writable",
+				"dt": "readonly",
+				"jwt_decode": "readonly"
 			},
-		}],
-		"linebreak-style": ["error", "unix"],
-		"quotes": "off",
-		"quote-props": ["error", "always"],
-		"semi": ["error", "always"],
-		"no-cond-assign": "off",
-		"no-console": "off",
-		"no-useless-escape": "off",
-		"no-extra-semi": "off",
-		"no-mixed-spaces-and-tabs": ["error", "smart-tabs"],
-		"no-prototype-builtins": "off",
-		"no-unused-vars": ["warn", {
-			"varsIgnorePattern": "^_",
-			"argsIgnorePattern": "^_",
-		}],
+			"ecmaVersion": "latest",
+			"sourceType": "module",
+		},
+		"rules": {
+			"comma-dangle": ["error", "always-multiline"],
+			"indent": ["error", "tab"],
+			"key-spacing": ["error", {
+				"align": {
+					"beforeColon": false,
+					"afterColon": true,
+					"on": "value",
+					"mode": "minimum",
+				},
+			}],
+			"linebreak-style": ["error", "unix"],
+			"quotes": "off",
+			"quote-props": ["error", "always"],
+			"semi": ["error", "always"],
+			"prefer-const": "error",
+			"no-cond-assign": "off",
+			"no-console": "off",
+			"no-useless-escape": "off",
+			"no-extra-semi": "off",
+			"no-mixed-spaces-and-tabs": ["error", "smart-tabs"],
+			"no-prototype-builtins": "off",
+			"no-unused-vars": ["warn", {
+				"varsIgnorePattern": "^_",
+				"argsIgnorePattern": "^_",
+			}],
+		},
 	},
-}];
+];

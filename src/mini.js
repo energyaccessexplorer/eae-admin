@@ -6,11 +6,9 @@ import { scaleLinear as d3scaleLinear } from "https://cdn.jsdelivr.net/npm/d3-sc
 import { range as d3range } from "https://cdn.jsdelivr.net/npm/d3-array@3/+esm";
 
 function colorscale(opts) {
-	let s;
+	const { stops, domain } = opts;
 
-	let { stops, domain } = opts;
-
-	s = d3scaleLinear()
+	const s = d3scaleLinear()
 		.domain(d3range(domain.min, domain.max + 0.0000001, (domain.max - domain.min) / (stops.length - 1)))
 		.range(stops)
 		.clamp(true);
@@ -87,7 +85,7 @@ async function raster_tiff(endpoint) {
 	r.nodata = parseFloat(image.fileDirectory.GDAL_NODATA);
 
 	let min, max; min = max = r.nodata;
-	for (let v of r.data) {
+	for (const v of r.data) {
 		if (v === r.nodata) continue;
 		if (min === r.nodata) min = v;
 		if (max === r.nodata) max = v;
