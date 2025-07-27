@@ -9,6 +9,7 @@ Object.assign(config, {
 	"storage_track_files": false,
 	"storage_use_prefix":  true,
 	"landing":             config.base + "/?model=geographies",
+	"email_reset":         "https://www.energyaccessexplorer.org/password-reset/",
 	"pre_view":            async _ => {
 		try {
 			const id = jwt_decode(localStorage['token']).id;

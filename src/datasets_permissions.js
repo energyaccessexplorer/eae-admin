@@ -64,13 +64,13 @@ export const model = {
 
 export const collection = {
 	"endpoint": function() {
-		const attrs = [
+		const select = [
 			"*",
 			'user(*)',
 			'dataset(*,category_name,geography_name)',
 		];
 
-		const params = { "select": attrs };
+		const params = { select };
 
 		if (user_id)
 			params['user_id'] = `eq.${user_id}`;

@@ -1,0 +1,6 @@
+{
+  "devDependencies": {
+    "eslint": "latest",
+    "eslint-formatter-unix": "latest"
+  }
+}

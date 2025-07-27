@@ -2,3 +2,4 @@
 /.env
 /*.diff
 *.orig
+/package-lock.json

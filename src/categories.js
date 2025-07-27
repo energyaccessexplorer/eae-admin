@@ -438,7 +438,7 @@ export const collection = {
 	"filters": ['name', 'name_long', 'unit', 'features'],
 
 	"endpoint": function() {
-		const attrs = [
+		const select = [
 			'id',
 			'name',
 			'name_long',
@@ -457,8 +457,8 @@ export const collection = {
 		];
 
 		const params = {
-			"select": attrs,
-			"order":  'name_long.asc',
+			select,
+			"order": 'name_long.asc',
 		};
 
 		const url = new URL(location);

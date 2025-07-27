@@ -437,7 +437,7 @@ export const model = {
 	},
 
 	"edit_modal_jobs": [
-		async function(object) {
+		async function existing_columns(object) {
 			//
 			// raster
 			// raster-mutant
@@ -491,7 +491,7 @@ export const model = {
 				.then(r => r.text())
 				.then(r => object.data._existing_columns = r.split(/\r?\n/)[0].split(','));
 		},
-		function(object, form, edit_modal) {
+		function clone_button(object, form, edit_modal) {
 			const p = ce('button', ce('i', null, { "class": 'bi-gem', "title": 'Paver' }));
 			p.onclick = _ => paver_routine(object, { edit_modal });
 
@@ -501,10 +501,10 @@ export const model = {
 			const d = qs('.actions-drawer', edit_modal.dialog);
 			d.append(c, object.data.haspaver ? p : "");
 		},
-		function(object, form) {
+		function external_link(object, form) {
 			dt.external_link(object, form, m => `${external_link_base(m)}/a/?id=${m.geography_id}&inputs=${m.name}`);
 		},
-		function(_, form) {
+		function metadata_import(_, form) {
 			const metadatadetails = form.querySelector('details[name="metadata"]');
 			const summary = metadatadetails.querySelector('summary');
 			summary.style = "position: relative;";
@@ -534,7 +534,7 @@ export const model = {
 
 			summary.append(button);
 		},
-		function(object, form) {
+		function json_segment(object, form) {
 			const ta = form.querySelector('textarea[name="category_overrides"]');
 			const ig = ta.parentElement;
 
@@ -593,45 +593,38 @@ export const model = {
 
 			ig.prepend(button);
 		},
-		async function(object, form) {
+		async function datasets_permissions(object, form) {
 			const permissions = await API.get('datasets_permissions', {
 				"select":     ["*", "user(email)"],
 				"dataset_id": `eq.${object.data.id}`,
 			});
 
 			const d = ce('details');
-			const s = ce('summary', ce('label', 'permissions'));
-
-			const a = ce('a', ce('i', null, { "class": "bi-pencil-fill" }));
-			a.style = "margin-left: 1em;";
-			a.onclick = _ => window.location = `./?model=datasets_permissions&dataset_id=${object.data.id}`;
-
-			s.append(a);
-			d.append(s);
+			d.append(ce('summary', ce('label', ce('a', 'permissions', { "href": `./?model=datasets_permissions&dataset_id=${object.data.id}` }))));
 
 			const x = ce('div', null, { "id": "badges" });
 			x.append(...permissions.map(f => ce('span', `${f.user.email} (${f.type})`, { "class": "badge" })));
 
 			d.append(x);
 
+			if (permissions.length === 0)
+				x.append(ce('p', "No users have special permissions"));
+
 			qs('fieldset', form).append(d);
 		},
-		async function(object, form) {
+		async function follows(object, form) {
 			const follows = await API.get('follows', { "dataset_id": `eq.${object.data.id}` });
 			const d = ce('details');
-			const s = ce('summary', ce('label', 'follows'));
-
-			const a = ce('a', ce('i', null, { "class": "bi-pencil-fill" }));
-			a.style = "margin-left: 1em;";
-			a.onclick = _ => window.location = `./?model=follows&dataset_id=${object.data.id}`;
-
-			s.append(a);
+			const s = ce('summary', ce('label', ce('a', 'access', { "href": `./?model=follows&dataset_id=${object.data.id}` })));
 			d.append(s);
 
 			const x = ce('div', null, { "id": "badges" });
 			x.append(...follows.map(f => ce('span', f.email, { "class": "badge" })));
 
 			d.append(x);
+
+			if (follows.length === 0)
+				x.append(ce('p', "No followers"));
 
 			qs('fieldset', form).append(d);
 		},
@@ -646,7 +639,7 @@ export const collection = {
 	},
 
 	"endpoint": function() {
-		const attrs = [
+		const select = [
 			'id',
 			'type',
 			'deployment',
@@ -666,7 +659,7 @@ export const collection = {
 			'updated_by',
 		];
 
-		const params = { "select": attrs };
+		const params = { select };
 
 		if (dataset_id)
 			params['id'] = `eq.${dataset_id}`;

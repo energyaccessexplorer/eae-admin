@@ -51,10 +51,13 @@ export const model = {
 
 			d.append(x);
 
+			if (follows.length === 0)
+				d.append(ce('p', "Not following any datasets"));
+
 			qs('fieldset', form).append(d);
 		},
 		async function access(object, form) {
-			const follows = await dt.API.get('access', {
+			const access = await dt.API.get('access', {
 				"select":  ['*'],
 				"user_id": `eq.${object.data.id}`,
 			});
@@ -62,13 +65,16 @@ export const model = {
 			d.append(ce('summary', ce('label', ce('a', 'access', { "href": `./?model=access&user_id=${object.data.id}` }))));
 
 			const x = ce('div', null, { "id": "badges" });
-			x.append(...follows.map(a => ce(
+			x.append(...access.map(a => ce(
 				'span',
 				ce('a', `${a.circle} - ${a.deployment}`, { "href": `./?model=access&user_id=${a.user_id}&edit_model=${a.user_id},${a.circle},${a.deployment}` }),
 				{ "class": "badge" },
 			)));
 
 			d.append(x);
+
+			if (access.length === 0)
+				d.append(ce('p', "Nothing granted"));
 
 			qs('fieldset', form).append(d);
 		},
