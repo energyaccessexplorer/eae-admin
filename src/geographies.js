@@ -188,7 +188,7 @@ function inherit_datasets() {
 			});
 
 			const n = await o.clone({
-				"deployment":      ['staging'],
+				"deployment":      ['protected'],
 				"processed_files": [],
 				"geography_id":    this.data.id,
 				"source_files":    d.source_files,
@@ -316,7 +316,7 @@ export const model = {
 
 		"flagged": {
 			"type": "boolean",
-			"hint": "Flagging a geography will automatically remove it from the production environment for revision. Flagged geographies can be reviewed in the staging environment. Unflagging does not add the geography back into the production environment",
+			"hint": "Flagging a geography will automatically remove it from the public environment for revision. Flagged geographies can be reviewed in the protected environment. Unflagging does not add the geography back into the public environment",
 		},
 
 		"circles": {
@@ -502,8 +502,8 @@ Select 'Cancel' if you are unsure or if someone has already customised some data
 	},
 
 	"parse": function(m) {
-		m.inproduction = m.deployment.indexOf("production") > -1;
-		m.instaging = m.deployment.indexOf("staging") > -1;
+		m.inpublic = m.deployment.indexOf("public") > -1;
+		m.inprotected = m.deployment.indexOf("protected") > -1;
 		m.intest = m.deployment.indexOf("test") > -1;
 		m.intraining = m.deployment.indexOf("training") > -1;
 

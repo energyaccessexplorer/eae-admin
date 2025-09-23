@@ -714,7 +714,7 @@ async function subgeography(r, { results, cid, vectors, csv, obj, resolution }) 
 			"adm":        obj.adm + 1,
 			"resolution": parseInt(resolution),
 			"circle":     obj.circle,
-			"deployment": ['staging'],
+			"deployment": ['protected'],
 		},
 	});
 
@@ -742,7 +742,7 @@ async function subgeography(r, { results, cid, vectors, csv, obj, resolution }) 
 	await d.create().then(r => did = r.id);
 
 	d.patch({
-		"deployment":      ['staging'],
+		"deployment":      ['protected'],
 		"processed_files": [],
 		source_files,
 	});

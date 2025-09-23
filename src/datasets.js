@@ -94,7 +94,7 @@ export const model = {
 
 		"flagged": {
 			"type": "boolean",
-			"hint": "Flagging a dataset will automatically remove it from the production environment for revision. Flagged datasets can be reviewed in the staging environment. Unflagging does not add the dataset back into the production environment.",
+			"hint": "Flagging a dataset will automatically remove it from the public environment for revision. Flagged datasets can be reviewed in the protected environment. Unflagging does not add the dataset back into the public environment.",
 		},
 
 		"private": {
@@ -107,7 +107,7 @@ export const model = {
 			"type":     "array",
 			"unique":   true,
 			"hint":     "Select the environment(s) where the dataset will be deployed.",
-			"validate": deployments_production_content_date_validate,
+			"validate": deployments_public_content_date_validate,
 			"required": true,
 			"nullable": false,
 			"schema":   {
@@ -426,8 +426,8 @@ export const model = {
 
 		m.deployments = m.deployment.join(',');
 
-		m.inproduction = m.deployment.indexOf("production") > -1;
-		m.instaging = m.deployment.indexOf("staging") > -1;
+		m.inpublic = m.deployment.indexOf("public") > -1;
+		m.inprotected = m.deployment.indexOf("protected") > -1;
 		m.intest = m.deployment.indexOf("test") > -1;
 		m.intraining = m.deployment.indexOf("training") > -1;
 
@@ -1047,14 +1047,14 @@ Just delete it. `,
 	return true;
 };
 
-function deployments_production_content_date_validate(newdata) {
-	if (!newdata.deployment.includes('production')) return true;
+function deployments_public_content_date_validate(newdata) {
+	if (!newdata.deployment.includes('public')) return true;
 
 	if (!newdata.metadata.content_date?.match('^[0-9]{4}$')) {
 		FLASH.push({
 			"type":    'error',
-			"title":   `Production Deployment + metadata -> content_date`,
-			"message": `Datasets that are going into production MUST have a single-year content date.`,
+			"title":   `Public Deployment + metadata -> content_date`,
+			"message": `Datasets that are going into public MUST have a single-year content date.`,
 		});
 
 		return false;

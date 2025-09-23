@@ -1,1 +1,1 @@
-export default ['production', 'staging', 'training', 'test'];
+export default ['public', 'protected', 'training', 'test'];

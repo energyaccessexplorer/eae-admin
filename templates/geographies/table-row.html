@@ -25,22 +25,22 @@
 
   <td>
     <span class="bi-globe2"
-          title="deployed in production"
-          bind-cond="inproduction"></span>
+          title="deployed in public"
+          bind-cond="inpublic"></span>
 
-    <span title="NOT deployed in production"
+    <span title="NOT deployed in public"
           class="bi-empty"
-          bind-unless="inproduction"></span>
+          bind-unless="inpublic"></span>
   </td>
 
   <td>
     <span class="bi-box2"
-          title="deployed in staging"
-          bind-cond="instaging"></span>
+          title="deployed in protected"
+          bind-cond="inprotected"></span>
 
-    <span title="NOT deployed in staging"
+    <span title="NOT deployed in protected"
           class="bi-empty"
-          bind-unless="instaging"></span>
+          bind-unless="inprotected"></span>
   </td>
 
   <td>

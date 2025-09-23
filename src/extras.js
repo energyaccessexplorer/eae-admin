@@ -14,11 +14,11 @@ export function external_link_base(m) {
 	let base;
 
 	if (or(dt.config.production.match(/localhost/),
-	       m.deployment.includes('production')))
+	       m.deployment.includes('public')))
 		base = dt.config.production;
 
 	else if (dt.config.production.match(/www/))
-		base = dt.config.production.replace('www', 'staging');
+		base = dt.config.production.replace('www', 'protected');
 
 	return base;
 };
