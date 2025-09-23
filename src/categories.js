@@ -10,8 +10,6 @@ import {
 	qs,
 } from '../lib/helpers.js';
 
-import deployment_options from './deployment-options.js';
-
 window.human_time = human_time;
 
 export const base = 'categories';
@@ -39,25 +37,6 @@ export const model = {
 		"unit": {
 			"type":  "string",
 			"label": "Unit",
-		},
-
-		"circle": {
-			"type":     "string",
-			"label":    "Circle",
-			"pattern":  "^[a-z][a-z0-9\\-]+[^\\-]$",
-			"validate": circle_validate,
-			"required": true,
-		},
-
-		"deployment": {
-			"type":     "array",
-			"hint":     "Select the environments where the category will be deployed",
-			"required": true,
-			"schema":   {
-				"type":     "string",
-				"options":  deployment_options,
-				"required": true,
-			},
 		},
 
 		"mutant": {
@@ -810,21 +789,6 @@ function mutant_validate(newdata) {
 	}
 
 	return true;
-};
-
-function circle_validate(newdata) {
-	if (['root', 'director'].includes(SELF.role)) return true;
-
-	const c = SELF.data.circles || [];
-
-	if (c.includes(newdata['circle'])) return true;
-
-	err(
-		"Circle error",
-		"Managers can create/edit categories only within their circle",
-	);
-
-	return false;
 };
 
 function controls_validate(newdata) {
