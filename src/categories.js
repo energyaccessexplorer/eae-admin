@@ -4,10 +4,13 @@ import {
 
 import {
 	and,
+	ce,
+	fake_blob_download,
 	human_time,
 	maybe,
 	or,
 	qs,
+	until,
 } from '../lib/helpers.js';
 
 window.human_time = human_time;
@@ -467,6 +470,33 @@ export const collection = {
 window.email_user = email_user;
 
 const FLASH = dt.FLASH;
+
+export function init() {
+	function dump_table() {
+		const a = ce('button', ce('i', null, { "class": 'bi-download', "title": 'Dump Table' }));
+
+		a.onclick = _ => dt.API.get('categories', {
+			"select": [
+				"name_long",
+				"name",
+				"description",
+				"unit",
+				"updated",
+				"created",
+				"controls-path:controls->>path",
+				'datasets(geography:geography_name,name)',
+				"analysis->indexes",
+			],
+		}, { "expect": "csv" })
+			.then(r => fake_blob_download(r, `categories-dataset-dump.csv`));
+
+		qs('body main header .actions-drawer').append(a);
+	};
+
+	until(_ => qs('body main header .actions-drawer')).then(dump_table);
+
+	return true;
+};
 
 function err(title, message) {
 	FLASH.clear();
