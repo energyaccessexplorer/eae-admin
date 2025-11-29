@@ -4,7 +4,7 @@ This is the frontend code for the platform's admin panel.
 
 ## Building & Hacking
 
-The magic is really done by [duck-tape](https://git.263.nu/f/duck-tape). This
+The magic is really done by [duck-tape](https://gitlab.com/noop.nu/duck-tape). This
 repository only contains the EAE's specific code. See duck-tape's documentation
 to get started.
 
