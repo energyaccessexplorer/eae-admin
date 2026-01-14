@@ -1,0 +1,35 @@
+Type of the permission:
+
+<select name="type"
+        style="margin-left: 1em;">
+  <option value="read">read</option>
+  <option value="write">write</option>
+  <option value="publish">publish</option>
+</select>
+
+<br><br>
+
+Select users to grant permission:
+<br><br>
+<table>
+  <thead>
+    <tr>
+      <th></th>
+      <th>email</th>
+      <th>role</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <tr bind-each="users">
+      <td><input type="checkbox" bind-value="id"/></td>
+      <td><span bind="email"></span></td>
+      <td><span bind="role"></span></td>
+    </tr>
+  </tbody>
+</table>
+
+<br><br>
+
+<button bind-listen="click"
+        bind-func="submit">Submit</button>

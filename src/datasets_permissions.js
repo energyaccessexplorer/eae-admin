@@ -81,3 +81,50 @@ export const collection = {
 		return params;
 	},
 };
+
+async function bulk_insert(dataset) {
+	const users = await dt.API.get('users', {
+		"select": ["id", "email", "role"],
+		"order":  ["role", "email"],
+	});
+
+	const content = bind(
+		await remote_tmpl("datasets_permissions/bulk-insert.html"),
+		{ users, dataset, submit },
+	);
+
+	const m = new modal({
+		"header": ce('h4', `Bulk Insert permissions for ${dataset.geography_name} - ${dataset.name || dataset.category_name}`),
+		content,
+	});
+
+	function submit() {
+		const type = qs('select[name=type]', m.content).value;
+		qsa('input:checked', m.content, true).forEach(i => {
+			const user_id = i.value;
+			dt.API.post('datasets_permissions', null, { "payload": { dataset_id, type, user_id }});
+		});
+	};
+
+	m.show();
+};
+
+export async function init() {
+	if (!["leader", "manager", "director", "root"].includes(SELF.role)) return true;
+
+	const dataset = await dt.API.get('datasets', {
+		"id":     `eq.${dataset_id}`,
+		"select": ["*", "category_name", "geography_name"],
+	}, { "one": true });
+
+	until(_ => qs('body main header .actions-drawer'))
+		.then(_ => {
+			const a = ce('button', ce('i', null, { "class": "bi-lock", "title": 'Bulk insert' }));
+			a.onclick = _ => bulk_insert(dataset);
+			qs('body main header .actions-drawer').append(a);
+
+			bulk_insert(dataset);
+		});
+
+	return true;
+};
