@@ -1,16 +1,6 @@
 DIST = ./dist
 
-.ifndef DT_BASE
-DT_BASE = "/"
-.endif
-
-.ifndef DT_HOST
-.error "DT_HOST is not defined. Hej då."
-.endif
-
-.ifndef DT_DEST
-.error "DT_DEST is not defined. Hej då."
-.endif
+DT_BASE ?= "/"
 
 lint:
 	eslint --format unix --fix ./src

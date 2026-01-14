@@ -79,6 +79,8 @@ export const model = {
 			qs('fieldset', form).append(d);
 		},
 	],
+
+	"delete_disabled": true,
 };
 
 export const collection = {

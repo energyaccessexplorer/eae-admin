@@ -374,9 +374,16 @@ export const model = {
 
 				"content_date": {
 					"type":     "string",
+					"pattern":  "^[0-9]{4}(-[0-9]{4})?$",
+					"nullable": true,
+					"hint":     "Date of the dataset content. Timeline uses this.",
+				},
+
+				"publication_date": {
+					"type":     "string",
 					"pattern":  "^[0-9]{4}$",
 					"nullable": true,
-					"hint":     "Date of the dataset content",
+					"hint":     "Date of the dataset's publication",
 				},
 			},
 		},

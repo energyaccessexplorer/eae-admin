@@ -1,9 +1,7 @@
 OS != uname
 TIME != date +'%Y-%m-%d--%T'
 
-.ifndef env
-env = development
-.endif
+env ?= development
 
 DEFAULTMK != ./bin/upfind -name default.mk
 include ${DEFAULTMK}
