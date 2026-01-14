@@ -242,7 +242,7 @@ export const model = {
 							"min":      0,
 							"max":      1,
 							"default":  0,
-							"hint":     "Factor fed to the simplification algorithm",
+							"hint":     "The tolerance value given to the simplification algorithm",
 						},
 					},
 				},
