@@ -485,18 +485,39 @@ export const model = {
 			const v = maybe(object.data.processed_files?.find(f => f.func === 'vectors'), 'endpoint');
 
 			if (v) fetch(v)
-				.then(r => r.json())
-				.then(r => {
-					object.data._features = r.features;
-					return r;
-				})
-				.then(r => object.data._existing_properties = Object.keys(r.features[0]['properties']));
+				.then(async r => {
+					if (!r.ok) {
+						FLASH.push({
+							"type":    "error",
+							"title":   "Missing vectors processed file",
+							"message": v,
+						});
+
+						return null;
+					}
+
+					const d = await r.json();
+					object.data._features = d.features;
+					object.data._existing_properties = Object.keys(d.features[0]['properties']);
+				});
 
 			const c = maybe(object.data.source_files?.find(f => f.func === 'csv'), 'endpoint');
 
 			if (c) fetch(c)
-				.then(r => r.text())
-				.then(r => object.data._existing_columns = r.split(/\r?\n/)[0].split(','));
+				.then(async r => {
+					if (!r.ok) {
+						FLASH.push({
+							"type":    "error",
+							"title":   "Missing CSV source file",
+							"message": c,
+						});
+
+						return null;
+					}
+
+					const d = await r.text();
+					object.data._existing_columns = d.split(/\r?\n/)[0].split(',');
+				});
 		},
 		function clone_button(object, form, edit_modal) {
 			const p = ce('button', ce('i', null, { "class": 'bi-gem', "title": 'Paver' }));

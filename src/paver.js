@@ -21,6 +21,8 @@ import {
 	uuid,
 } from '../lib/helpers.js';
 
+import bind from '../lib/bind.js';
+
 const FLASH = dt.FLASH;
 const API = dt.API;
 
@@ -128,16 +130,17 @@ export async function routine(obj, { edit_modal, pre }) {
 	const $ = obj.data;
 
 	const payload = {
-		"geographyid": $.geography_id,
-		"datasetid":   $.id,
-		"dataseturl":  null,
-		"baseurl":     null,
-		"field":       null,
-		"fields":      [],
-		"lnglat":      [],
-		"config":      null,
-		"resolution":  null,
-		"simplify":    null,
+		"geographyid":  $.geography_id,
+		"datasetid":    $.id,
+		"dataseturl":   null,
+		"referenceurl": null,
+		"baseurl":      null,
+		"attr":         null,
+		"fields":       [],
+		"lnglat":       [],
+		"config":       null,
+		"resolution":   null,
+		"simplify":     null,
 	};
 
 	let fn;
@@ -177,7 +180,7 @@ export async function routine(obj, { edit_modal, pre }) {
 
 	case 'polygons-boundaries': {
 		datasets_func = 'vectors';
-		template = 'datasets/paver-outline.html';
+		template = 'datasets/paver-boundaries.html';
 
 		if ($.category_name === 'boundaries') {
 			header = "Admin Boundaries";
@@ -221,33 +224,26 @@ export async function routine(obj, { edit_modal, pre }) {
 		return (await fn($, payload, { pre }));
 
 	const id = "form-" + uuid();
-	const footer = `
-<div class="input-group">
-  <button type="submit" form=${id}>Pave it!</button>
-</div>`;
-
 	const paver_modal = new modal({
 		header,
-		"content": await remote_tmpl(template),
-		footer,
+		"content": bind(await remote_tmpl(template), { id, "outline": $.category_name === 'outline' }),
+		"footer":  bind(await remote_tmpl('datasets/paver-footer.html'), { id }),
 	});
 
 	const c = paver_modal.content;
 	const f = c.querySelector('form');
 
-	qs('form', c).id = id;
 	c.append(ce('pre', null, { "id": "infopre" }));
 
-	const s = await fn($, payload, { paver_modal });
+	const go = await fn($, payload, { paver_modal });
 
 	f.onsubmit = function(e) {
 		e.preventDefault();
 		qs('[type="submit"]', paver_modal.footer).setAttribute('disabled', '');
 
-		s()
-			.then(_r => {
-				const r = _r[0];
-
+		go()
+			.then(r => r ? ds_patch($.id, r) : null)
+			.then(r => {
 				const form = qs('form', edit_modal.content);
 
 				const changes = [];
@@ -359,7 +355,7 @@ function flag(id) {
 	);
 };
 
-async function submit(routine, payload, { paver_modal, pre }) {
+async function submit(routine, dataset_id, payload, { paver_modal, pre }) {
 	const body = [];
 
 	for (const p in payload)
@@ -369,9 +365,7 @@ async function submit(routine, payload, { paver_modal, pre }) {
 
 	const socket_id = uuid();
 
-	await socket_listen(socket_id, m => {
-		if (infopre) infopre.innerText += "\n" + m;
-	});
+	await socket_listen(socket_id, m => infopre ? infopre.innerText += "\n" + m : console.log(m));
 
 	return fetch(`${dt.config.paver_endpoint}/routines?routine=${routine}&socket_id=${socket_id}`, {
 		"method":  'POST',
@@ -402,47 +396,29 @@ ${msg}`;
 			};
 		}
 
+		return await r.json();
+	}).then(r => {
+		if (r.error) {
+			flag(dataset_id);
+
+			FLASH.push({
+				"type":    'error',
+				"title":   `${routine} failed`,
+				"message": "Inspect the error messages",
+			});
+
+			return null;
+		}
+
 		return r;
 	});
 };
 
 async function outline($, payload, { paver_modal }) {
-	if (paver_modal)
-		paver_modal.content.querySelector('form input[name=field]').value = maybe($, 'vectors_configuration', 'vectors_id');
-
 	return function() {
-		payload.field = paver_modal ?
-			paver_modal.content.querySelector('form input[name=field]').value :
-			maybe($, 'vectors_configuration', 'vectors_id');
-
-		return submit('admin-boundaries', payload, { paver_modal })
-			.then(r => r.json())
-			.then(async r => {
-				if (r.error) {
-					flag($.id);
-
-					FLASH.push({
-						"type":    'error',
-						"title":   "Outline Failed",
-						"message": "Inspect the error messages",
-					});
-
-					return r;
-				}
-
-				const d = API.patch(
-					'datasets',
-					{ "id": `eq.${$.id}` },
-					{	"payload": {
-						"processed_files": [{
-							"func":     'vectors',
-							"endpoint": `https://wri-public-data.s3.amazonaws.com/EnergyAccess/paver-outputs/${r.vectors}`,
-						}, {
-							"func":     'raster',
-							"endpoint": `https://wri-public-data.s3.amazonaws.com/EnergyAccess/paver-outputs/${r.raster}`,
-						}],
-					} },
-				);
+		return submit('admin-boundaries', $.id, payload, { paver_modal })
+			.then(r => {
+				if (!r) return null;
 
 				const {Left, Bottom, Right, Top} = r.info.bounds;
 
@@ -452,47 +428,20 @@ async function outline($, payload, { paver_modal }) {
 					},
 				});
 
-				return d;
+				return r;
 			});
 	};
 };
 
 async function admin_boundaries($, payload, { paver_modal }) {
 	if (paver_modal)
-		paver_modal.content.querySelector('form input[name=field]').value = maybe($, 'vectors_configuration', 'vectors_id');
+		paver_modal.content.querySelector('form input[name=attr]').value = maybe($, 'vectors_configuration', 'vectors_id');
 
 	return function() {
-		payload.field = paver_modal.content.querySelector('form input[name=field]').value;
+		payload.attr = paver_modal.content.querySelector('form input[name=attr]').value;
 
-		return submit('admin-boundaries', payload, { paver_modal })
-			.then(r => r.json())
-			.then(async r => {
-				if (r.error) {
-					flag($.id);
-
-					FLASH.push({
-						"type":    'error',
-						"title":   "Admin Boundaries Failed",
-						"message": "Inspect the error messages",
-					});
-
-					return r;
-				}
-
-				return API.patch(
-					'datasets',
-					{ "id": `eq.${$.id}` },
-					{ "payload": {
-						"processed_files": [{
-							"func":     'vectors',
-							"endpoint": `https://wri-public-data.s3.amazonaws.com/EnergyAccess/paver-outputs/${r.vectors}`,
-						}, {
-							"func":     'raster',
-							"endpoint": `https://wri-public-data.s3.amazonaws.com/EnergyAccess/paver-outputs/${r.raster}`,
-						}],
-					},
-					});
-			});
+		return submit('admin-boundaries', $.id, payload, { paver_modal })
+			.then(r => r ? ds_patch($.id, r) : null);
 	};
 };
 
@@ -523,35 +472,7 @@ async function clip_proximity($, payload, { paver_modal }) {
 	}
 
 	return function() {
-		return submit('clip-proximity', payload, { paver_modal })
-			.then(r => r.json())
-			.then(async r => {
-				if (r.error) {
-					flag($.id);
-
-					FLASH.push({
-						"type":    'error',
-						"title":   "Clip Proximity Failed",
-						"message": "Inspect the error messages",
-					});
-
-					return r;
-				}
-
-				return API.patch(
-					'datasets',
-					{ "id": `eq.${$.id}` },
-					{ "payload": {
-						"processed_files": [{
-							"func":     'vectors',
-							"endpoint": `https://wri-public-data.s3.amazonaws.com/EnergyAccess/paver-outputs/${r.vectors}`,
-						}, {
-							"func":     'raster',
-							"endpoint": `https://wri-public-data.s3.amazonaws.com/EnergyAccess/paver-outputs/${r.raster}`,
-						}],
-					} },
-				);
-			});
+		return submit('clip-proximity', $.id, payload, { paver_modal });
 	};
 };
 
@@ -592,7 +513,7 @@ async function csv_points($, payload, { paver_modal }) {
 
 				qs('[type="submit"]', paver_modal.footer).removeAttribute('disabled');
 
-				throw new Error("Attribute '${p}' does not exist");
+				throw new Error(`Attribute '${p}' does not exist`);
 			}
 		}
 
@@ -610,98 +531,21 @@ async function csv_points($, payload, { paver_modal }) {
 			}
 		}
 
-		return submit('csv-points', payload, { paver_modal })
-			.then(r => r.json())
-			.then(async r => {
-				if (r.error) {
-					flag($.id);
-
-					FLASH.push({
-						"type":    'error',
-						"title":   "CSV Points Failed",
-						"message": "Inspect the error messages",
-					});
-
-					return r;
-				}
-
-				return API.patch(
-					'datasets',
-					{ "id": `eq.${$.id}` },
-					{ "payload": {
-						"processed_files": [{
-							"func":     'vectors',
-							"endpoint": `https://wri-public-data.s3.amazonaws.com/EnergyAccess/paver-outputs/${r.vectors}`,
-						}, {
-							"func":     'raster',
-							"endpoint": `https://wri-public-data.s3.amazonaws.com/EnergyAccess/paver-outputs/${r.raster}`,
-						}],
-					} },
-				);
-			});
+		return submit('csv-points', $.id, payload, { paver_modal });
 	};
 };
 
 async function crop_raster($, payload, { paver_modal }) {
 	return function() {
-		return submit('crop-raster', payload, { paver_modal })
-			.then(r => r.json())
-			.then(async r => {
-				if (r.error) {
-					flag($.id);
-
-					FLASH.push({
-						"type":    'error',
-						"title":   "Crop Raster Failed",
-						"message": "Inspect the error messages",
-					});
-
-					return r;
-				}
-
-				return API.patch('datasets', { "id": `eq.${$.id}` }, {
-					"payload": {
-						"processed_files": [{
-							"func":     'raster',
-							"endpoint": `https://wri-public-data.s3.amazonaws.com/EnergyAccess/paver-outputs/${r.raster}`,
-						}],
-					},
-				});
-			});
+		return submit('crop-raster', $.id, payload, { paver_modal });
 	};
 };
 
 async function simplify($, payload, { paver_modal }) {
 	return function() {
-		payload.field = maybe($, 'vectors_configuration', 'vectors_id');
+		payload.attr = maybe($, 'vectors_configuration', 'vectors_id');
 
-		return submit('simplify', payload, { paver_modal })
-			.then(r => r.json())
-			.then(async r => {
-				if (r.error) {
-					flag($.id);
-
-					FLASH.push({
-						"type":    'error',
-						"title":   "Simplify Failed",
-						"message": "Inspect the error messages",
-					});
-
-					return r;
-				}
-
-				return API.patch('datasets', { "id": `eq.${$.id}` }, {
-					"payload": {
-						"processed_files": [{
-							"func":     'vectors',
-							"endpoint": `https://wri-public-data.s3.amazonaws.com/EnergyAccess/paver-outputs/${r.vectors}`,
-						}, {
-							"func":     'raster',
-							"endpoint": `https://wri-public-data.s3.amazonaws.com/EnergyAccess/paver-outputs/${r.raster}`,
-						}],
-					},
-				});
-			});
+		return submit('simplify', $.id, payload, { paver_modal });
 	};
 };
 
@@ -764,7 +608,7 @@ async function subgeography(r, { results, cid, vectors, csv, obj, resolution }) 
 export async function subgeographies(obj, { vectors, csv }) {
 	const payload = {
 		"dataseturl": vectors.endpoint,
-		"idcolumn":   vectors.id,
+		"attr":       vectors.id,
 	};
 
 	const table = await fetch(csv.endpoint).then(r => r.text()).then(r => csvParse(r));
@@ -791,13 +635,23 @@ export async function subgeographies(obj, { vectors, csv }) {
 	f.onsubmit = e => {
 		e.preventDefault();
 
-		submit('subgeographies', payload, { paver_modal })
-			.then(async r => r.json())
+		submit('subgeographies', obj.id, payload, { paver_modal })
 			.then(async results => {
-				const resolution = payload.field = paver_modal.content.querySelector('form input[name=resolution]').value;
+				const resolution = paver_modal.content.querySelector('form input[name=resolution]').value;
 
 				for (const r of table)
 					await subgeography(r, { obj, results, csv, cid, vectors, resolution });
 			});
 	};
+};
+
+function ds_patch(id, results) {
+	const processed_files = ['vectors', 'raster', 'csv']
+		.filter(e => results[e])
+		.map(e => ({
+			"func":     e,
+			"endpoint": `https://wri-public-data.s3.amazonaws.com/EnergyAccess/paver-outputs/${results[e]}`,
+		}));
+
+	return API.patch('datasets', { "id": `eq.${id}` }, { "payload": { processed_files }, "one": true });
 };

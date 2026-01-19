@@ -7,10 +7,7 @@ export function listen(id, fn) {
 
 	c.addEventListener("close", e => console.log(`WebSocket Disconnected`, e));
 
-	c.addEventListener("message", e => {
-		if (typeof fn === 'function') fn(e.data);
-		console.log(e.data);
-	});
+	c.addEventListener("message", e => typeof fn === 'function' ? fn(e.data) : null);
 
 	return new Promise(r => c.addEventListener("open", _ => r()));
 };
