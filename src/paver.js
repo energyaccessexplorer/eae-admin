@@ -141,7 +141,26 @@ export async function routine(obj, { edit_modal, pre }) {
 		"config":       null,
 		"resolution":   null,
 		"simplify":     null,
+		"s3bucket":     null,
 	};
+
+	// const tree = await API.get('geographies_tree_up', { "id": `eq.${$.geography_id}` }, { "one": true });
+	//
+	// let root = {};
+	// if (maybe(tree, 'path', 0))
+	// 	root = await API.get('geographies', { "id": `eq.${tree['path'][0]}`, "select": ["name"] }, { "one": true });
+	//
+	// switch (root['name']) {
+	// case 'India':
+	// 	payload["s3bucket"] = "india";
+	// 	break;
+	//
+	// default:
+	// 	payload["s3bucket"] = "world";
+	// 	break;
+	// }
+	//
+	payload["s3bucket"] = "world";
 
 	let fn;
 	let datasets_func;
