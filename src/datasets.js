@@ -622,6 +622,14 @@ export const model = {
 			ig.prepend(button);
 		},
 		async function datasets_permissions(object, form) {
+			const access = await API.get('access', {
+				"user_id": `eq.${SELF.id}`,
+				"circle":  `in.(${object.data.circles})`,
+			});
+
+			if (and(!access.length,
+			        !['root', 'director'].includes(SELF.role))) return;
+
 			const permissions = await API.get('datasets_permissions', {
 				"select":     ["*", "user(email)"],
 				"dataset_id": `eq.${object.data.id}`,
@@ -769,7 +777,7 @@ async function flag(obj) {
 };
 
 function source_files_requirements(m) {
-	let n;
+	let n = [];
 
 	// 'points' are handled later
 	switch (m.type) {
@@ -804,7 +812,6 @@ function source_files_requirements(m) {
 
 	case 'raster-mutant':
 	default:
-		n = [];
 		break;
 	}
 

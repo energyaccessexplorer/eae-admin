@@ -4,13 +4,9 @@ import {
 	csvParse,
 } from '../lib/ds-dsv.js';
 
-import modal from '../lib/modal.js';
-
 import {
 	listen as socket_listen,
 } from './socket.js';
-
-import * as datasets_module from './datasets.js';
 
 import {
 	and,
@@ -22,6 +18,10 @@ import {
 } from '../lib/helpers.js';
 
 import bind from '../lib/bind.js';
+
+import modal from '../lib/modal.js';
+
+import * as datasets_module from './datasets.js';
 
 const FLASH = dt.FLASH;
 const API = dt.API;
