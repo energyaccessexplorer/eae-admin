@@ -444,7 +444,7 @@ export const model = {
 	},
 
 	"edit_modal_jobs": [
-		async function existing_columns(object) {
+		async function columns_and_paver(object, _, edit_modal) {
 			//
 			// raster
 			// raster-mutant
@@ -485,7 +485,7 @@ export const model = {
 
 			const v = maybe(object.data.processed_files?.find(f => f.func === 'vectors'), 'endpoint');
 
-			if (v) fetch(v)
+			if (v) await fetch(v)
 				.then(async r => {
 					if (!r.ok) {
 						FLASH.push({
@@ -504,7 +504,7 @@ export const model = {
 
 			const c = maybe(object.data.source_files?.find(f => f.func === 'csv'), 'endpoint');
 
-			if (c) fetch(c)
+			if (c) await fetch(c)
 				.then(async r => {
 					if (!r.ok) {
 						FLASH.push({
@@ -519,16 +519,19 @@ export const model = {
 					const d = await r.text();
 					object.data._existing_columns = d.split(/\r?\n/)[0].split(',');
 				});
-		},
-		function clone_button(object, form, edit_modal) {
+
 			const p = ce('button', ce('i', null, { "class": 'bi-gem', "title": 'Paver' }));
 			p.onclick = _ => paver_routine(object, { edit_modal });
 
+			const d = qs('.actions-drawer', edit_modal.dialog);
+			d.append(object.data.haspaver ? p : "");
+		},
+		function clone_button(object, form, edit_modal) {
 			const c = ce('button', ce('i', null, { "class": 'bi-files', "title": 'Clone' }));
 			c.onclick = _ => object.clone({ "name": (object.data.name || object.data.category_name) + "-clone-" + (new Date).getTime() });
 
 			const d = qs('.actions-drawer', edit_modal.dialog);
-			d.append(c, object.data.haspaver ? p : "");
+			d.append(c);
 		},
 		function external_link(object, form) {
 			dt.external_link(object, form, m => `${external_link_base(m)}/a/?id=${m.geography_id}&inputs=${m.name}`);

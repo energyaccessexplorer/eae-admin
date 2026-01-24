@@ -2,10 +2,16 @@
       style="text-align: right;">
   <div bind-unless="outline"
        class="input-group">
-    <label>attribute</label>
+    <label>ID property</label>
 
-    <input name="attr"
-           type="text"
-           required />
+    <select name="attr"
+            required>
+      <option selected
+              disabled>Select one</option>
+
+      <option bind-each="_available_properties"
+              bind-value="v"
+              bind="v"></option>
+    </select>
   </div>
 </form>

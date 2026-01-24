@@ -254,8 +254,8 @@ export async function routine(obj, { edit_modal, pre }) {
 	const formid = "form-" + uuid();
 	const paver_modal = new modal({
 		header,
-		"content": bind(await remote_tmpl(template), { id, "outline": $.category_name === 'outline' }),
-		"footer":  bind(await remote_tmpl('datasets/paver-footer.html'), { id }),
+		"content": await remote_tmpl(template),
+		"footer":  await remote_tmpl('datasets/paver-footer.html'),
 	});
 
 	paver_modal.content.querySelector('form').setAttribute('id', formid);
@@ -446,6 +446,9 @@ ${msg}`;
 };
 
 async function outline($, payload, { paver_modal }) {
+	if (paver_modal)
+		bind(paver_modal.content, { "outline": true });
+
 	return function() {
 		return submit('admin-boundaries', $.id, payload, { paver_modal })
 			.then(r => {
@@ -465,8 +468,13 @@ async function outline($, payload, { paver_modal }) {
 };
 
 async function admin_boundaries($, payload, { paver_modal }) {
-	if (paver_modal)
-		paver_modal.content.querySelector('form input[name=attr]').value = maybe($, 'vectors_configuration', 'vectors_id');
+	if (paver_modal) {
+		bind(paver_modal.content, {
+			"_available_properties": $._available_properties.map(v => ({ v })),
+		});
+
+		paver_modal.content.querySelector('form select[name=attr]').value = maybe($, 'vectors_configuration', 'vectors_id');
+	}
 
 	return function() {
 		payload.attr = paver_modal.content.querySelector('form input[name=attr]').value;
@@ -568,8 +576,11 @@ async function csv_points($, payload, { paver_modal }) {
 
 async function csv_raster($, payload, { paver_modal }) {
 	if (paver_modal) {
-		const input = paver_modal.content.querySelector('form select[name=attr]');
+		bind(paver_modal.content, {
+			"_available_properties": $._available_properties.map(v => ({ v })),
+		});
 
+		const input = paver_modal.content.querySelector('form select[name=attr]');
 		input.value = payload.attr;
 
 		if (payload.attr)

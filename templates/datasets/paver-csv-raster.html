@@ -1,11 +1,17 @@
 <form id="form-"
       style="text-align: right;">
   <div class="input-group">
-    <label>attribute</label>
+    <label>Value column</label>
 
-    <input name="attr"
-           type="text"
-           required />
+    <select name="attr"
+            required>
+      <option selected
+              disabled>Select one</option>
+
+      <option bind-each="_available_properties"
+              bind-value="v"
+              bind="v"></option>
+    </select>
   </div>
 
   <div class="input-group">
