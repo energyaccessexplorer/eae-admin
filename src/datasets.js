@@ -461,6 +461,7 @@ export const model = {
 				"polygons-boundaries",
 				"polygons-valued",
 				"polygons-timeline",
+				"raster",
 			].includes(object.data.type)) return;
 
 			const s = maybe(object.data.source_files?.find(f => f.func === 'vectors'), 'endpoint');
@@ -475,7 +476,7 @@ export const model = {
 				})
 				.then(r => object.data._available_properties = Object.keys(r.features[0]['properties']));
 
-			if (object.data.type === 'points') {
+			if (or(object.data.type === 'points', object.data.type === 'raster')) {
 				const ps = maybe(object.data.source_files?.find(f => f.func === 'csv'), 'endpoint');
 
 				if (ps) fetch(ps).then(r => r.text())
@@ -779,7 +780,8 @@ async function flag(obj) {
 function source_files_requirements(m) {
 	let n = [];
 
-	// 'points' are handled later
+	// points,raster are handled later
+	//
 	switch (m.type) {
 	case 'polygons':
 	case 'lines':
@@ -834,6 +836,26 @@ async function source_files_validate(newdata, data) {
 					"type":    'error',
 					"title":   `Source Files are incomplete`,
 					"message": `A 'vectors' or 'csv' item is required.`,
+				});
+
+				return false;
+			}
+		}
+	}
+
+	if (data.type === 'raster') {
+		const l = newdata.source_files.length;
+		if (l === 0)
+			reqs = ['raster', 'csv'];
+		else {
+			const first = newdata.source_files.find(x => ['raster', 'csv'].includes(x.func));
+
+			if (first) reqs = [first.func];
+			else {
+				FLASH.push({
+					"type":    'error',
+					"title":   `Source Files are incomplete`,
+					"message": `A 'raster' or 'csv' item is required.`,
 				});
 
 				return false;

@@ -214,6 +214,15 @@ export async function routine(obj, { edit_modal, pre }) {
 
 	case 'raster-valued':
 	case 'raster': {
+		if ($.source_files.find(f => f.func === 'csv')) {
+			fn = csv_raster;
+			datasets_func = 'csv';
+			template = 'datasets/paver-csv-raster.html';
+			header = "CSV -> raster";
+
+			break;
+		}
+
 		datasets_func = 'raster';
 		template = 'datasets/paver-crop-raster.html';
 		fn = crop_raster;
@@ -551,6 +560,38 @@ async function csv_points($, payload, { paver_modal }) {
 		}
 
 		return submit('csv-points', $.id, payload, { paver_modal });
+	};
+};
+
+async function csv_raster($, payload, { paver_modal }) {
+	if (paver_modal) {
+		const input = paver_modal.content.querySelector('form select[name=attr]');
+
+		input.value = payload.attr;
+
+		if (payload.attr)
+			input.removeAttribute('disabled');
+	}
+
+	return function() {
+		payload.lnglat = paver_modal.content.querySelector('form input[name=lnglat]').value;
+		payload.attr = paver_modal.content.querySelector('form input[name=attr]').value;
+
+		for (const p of payload.lnglat.split(',')) {
+			if ($._available_properties.indexOf(p) < 0) {
+				FLASH.push({
+					"type":    'error',
+					"title":   "Incorrect long/lat Selection",
+					"message": `Attribute '${p}' does not exist.`,
+				});
+
+				qs('[type="submit"]', paver_modal.footer).removeAttribute('disabled');
+
+				throw new Error("Attribute '${p}' does not exist");
+			}
+		}
+
+		return submit('csv-raster', $.id, payload, { paver_modal });
 	};
 };
 
