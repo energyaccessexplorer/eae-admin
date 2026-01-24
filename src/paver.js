@@ -127,11 +127,11 @@ async function payload_fill($, payload, datasets_func) {
 export async function routine(obj, { edit_modal, pre }) {
 	await pavercheck();
 
-	const $ = obj.data;
+	const data = obj.data;
 
 	const payload = {
-		"geographyid":  $.geography_id,
-		"datasetid":    $.id,
+		"geographyid":  data.geography_id,
+		"datasetid":    data.id,
 		"dataseturl":   null,
 		"referenceurl": null,
 		"baseurl":      null,
@@ -144,7 +144,7 @@ export async function routine(obj, { edit_modal, pre }) {
 		"s3bucket":     null,
 	};
 
-	// const tree = await API.get('geographies_tree_up', { "id": `eq.${$.geography_id}` }, { "one": true });
+	// const tree = await API.get('geographies_tree_up', { "id": `eq.${data.geography_id}` }, { "one": true });
 	//
 	// let root = {};
 	// if (maybe(tree, 'path', 0))
@@ -167,9 +167,9 @@ export async function routine(obj, { edit_modal, pre }) {
 	let template;
 	let header;
 
-	switch ($.type) {
+	switch (data.type) {
 	case 'points':
-		if ($.source_files.find(f => f.func === 'csv')) {
+		if (data.source_files.find(f => f.func === 'csv')) {
 			fn = csv_points;
 			datasets_func = 'csv';
 			template = 'datasets/paver-csv-points.html';
@@ -201,11 +201,11 @@ export async function routine(obj, { edit_modal, pre }) {
 		datasets_func = 'vectors';
 		template = 'datasets/paver-boundaries.html';
 
-		if ($.category_name === 'boundaries') {
+		if (data.category_name === 'boundaries') {
 			header = "Admin Boundaries";
 			fn = admin_boundaries;
 		}
-		else if ($.category_name === 'outline') {
+		else if (data.category_name === 'outline') {
 			header = "Outline";
 			fn = outline;
 		}
@@ -214,7 +214,7 @@ export async function routine(obj, { edit_modal, pre }) {
 
 	case 'raster-valued':
 	case 'raster': {
-		if ($.source_files.find(f => f.func === 'csv')) {
+		if (data.source_files.find(f => f.func === 'csv')) {
 			fn = csv_raster;
 			datasets_func = 'csv';
 			template = 'datasets/paver-csv-raster.html';
@@ -236,10 +236,10 @@ export async function routine(obj, { edit_modal, pre }) {
 
 	await obj.fetch();
 
-	const ok = await payload_fill($, payload, datasets_func);
+	const ok = await payload_fill(data, payload, datasets_func);
 
 	if (!ok) {
-		flag($.id);
+		flag(data.id);
 
 		return {
 			"error":   "Failed. Looks like a configuration error.",
@@ -249,45 +249,48 @@ export async function routine(obj, { edit_modal, pre }) {
 	}
 
 	if (!edit_modal)
-		return (await fn($, payload, { pre }));
+		return (await fn(data, payload, { pre }));
 
-	const id = "form-" + uuid();
+	const formid = "form-" + uuid();
 	const paver_modal = new modal({
 		header,
 		"content": bind(await remote_tmpl(template), { id, "outline": $.category_name === 'outline' }),
 		"footer":  bind(await remote_tmpl('datasets/paver-footer.html'), { id }),
 	});
 
+	paver_modal.content.querySelector('form').setAttribute('id', formid);
+	paver_modal.footer.querySelector('button').setAttribute('form', formid);
+
 	const c = paver_modal.content;
 	const f = c.querySelector('form');
 
 	c.append(ce('pre', null, { "id": "infopre" }));
 
-	const go = await fn($, payload, { paver_modal });
+	const go = await fn(data, payload, { paver_modal });
 
 	f.onsubmit = function(e) {
 		e.preventDefault();
 		qs('[type="submit"]', paver_modal.footer).setAttribute('disabled', '');
 
 		go()
-			.then(r => r ? ds_patch($.id, r) : null)
+			.then(r => r ? ds_patch(data.id, r) : null)
 			.then(r => {
 				const form = qs('form', edit_modal.content);
 
 				const changes = [];
 
 				for (const k in r) {
-					const d = typeof $[k];
+					const d = typeof data[k];
 
 					switch (d) {
 					case 'object': {
-						if (JSON.stringify($[k]) !== JSON.stringify(r[k]))
+						if (JSON.stringify(data[k]) !== JSON.stringify(r[k]))
 							changes.push(k);
 						break;
 					}
 
 					default: {
-						if ($[k] !== r[k])
+						if (data[k] !== r[k])
 							changes.push(k);
 						break;
 					}
@@ -298,7 +301,7 @@ export async function routine(obj, { edit_modal, pre }) {
 					.then(_ => dt.edit_update(form, changes, obj));
 			})
 			.then(async _ => {
-				const tree = await API.get('geographies_tree_down', { "id": `eq.${$.geography_id}` });
+				const tree = await API.get('geographies_tree_down', { "id": `eq.${data.geography_id}` });
 
 				if (tree.length <= 1) return;
 
@@ -337,14 +340,14 @@ export async function routine(obj, { edit_modal, pre }) {
 
 					const opts = {
 						"geography_id": `eq.${g.id}`,
-						"category_id":  `eq.${$.category_id}`,
+						"category_id":  `eq.${data.category_id}`,
 						"flagged":      "is.false",
 					};
 
-					if ($.name === null) {
+					if (data.name === null) {
 						opts['name'] = "is.null";
 					} else {
-						opts['name'] = `eq.${$.name}`;
+						opts['name'] = `eq.${data.name}`;
 					}
 
 					let ds = await API.get('datasets', opts);
@@ -355,7 +358,7 @@ export async function routine(obj, { edit_modal, pre }) {
 					if (ds.length === 0) {
 						const o = new dt.object({
 							"module": dt.modules['datasets'],
-							"data":   $,
+							"data":   data,
 						});
 
 						ds = (await o.clone({ "geography_id": leaf }))['data'];
